@@ -17,11 +17,5 @@ public class Messages {
     public static String getMessage(String key,Object... args){
         return messageSource.getMessage(key,args, LocaleContextHolder.getLocale());
     }
-
-    public static final String NOT_FOUND = "contact.message.not.found";
-    public static final String DELETED = "contact.message.deleted";
 }
 
-//serviste kullanimi // Eskiden: Messages.NOT_FOUND_MESSAGE
-/// / Şimdi:
-//throw new ResourceNotFoundException(Messages.getMessage(Messages.NOT_FOUND));
