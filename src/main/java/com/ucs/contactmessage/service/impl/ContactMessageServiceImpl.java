@@ -85,8 +85,8 @@ public class ContactMessageServiceImpl implements IContactMessageService {
     public ResponseMessage<ContactMessageResponse> updateMessageById(Long id, ContactMessageRequest contactMessageRequest) {
         ContactMessage contactMessage = getContactMessageById(id);
 
-        ContactMessage updatedContactMessage = contactMessageMapper.toContactMessage(contactMessageRequest);
-        ContactMessage savedContactMessage = contactMessageRepository.save(updatedContactMessage);
+        contactMessageMapper.updateContactMessageFromDto(contactMessageRequest,contactMessage);
+        ContactMessage savedContactMessage = contactMessageRepository.save(contactMessage);
         ContactMessageResponse response = contactMessageMapper.toContactMessageResponse(savedContactMessage);
 
         return ResponseMessage.<ContactMessageResponse>builder()
