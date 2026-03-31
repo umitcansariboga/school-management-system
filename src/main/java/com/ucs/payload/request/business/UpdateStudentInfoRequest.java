@@ -1,4 +1,36 @@
 package com.ucs.payload.request.business;
 
+import jakarta.validation.constraints.*;
+import lombok.*;
+import org.hibernate.Internal;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
 public class UpdateStudentInfoRequest {
+
+    @NotNull(message = "Please select education term")
+    private Long educationTermId;
+
+    @DecimalMin("0.0")
+    @DecimalMax("100.0")
+    @NotNull(message = "Please enter midterm exam")
+    private Double midTermExam;
+
+    @DecimalMin("0.0")
+    @DecimalMax("100.0")
+    @NotNull(message = "Please enter final exam")
+    private Double finalExam;
+
+    @NotNull(message = "Please enter absentee")
+    private Internal absentee;
+
+    @NotBlank(message = "Please enter info")
+    @Size(min = 10, max = 200, message = "Info should be at least 10 chars")
+    private String infoNote;
+
+    @NotBlank(message = "Please select lesson")
+    private Long lessonId;
 }
