@@ -22,5 +22,4 @@ public class UserRole {
     private RoleType roleType;
 
     private String roleName;
-
 }

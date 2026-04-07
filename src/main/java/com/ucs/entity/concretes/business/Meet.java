@@ -37,7 +37,7 @@ public class Meet {
             joinColumns = @JoinColumn(name = "meet_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    private Set<Meet> studentList;
+    private Set<User> studentList;
 
     @ManyToOne
     private User advisoryTeacher;

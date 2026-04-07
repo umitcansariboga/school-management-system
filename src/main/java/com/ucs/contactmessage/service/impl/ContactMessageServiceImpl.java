@@ -4,12 +4,14 @@ import com.ucs.contactmessage.dto.ContactMessageRequest;
 import com.ucs.contactmessage.dto.ContactMessageResponse;
 import com.ucs.contactmessage.entity.ContactMessage;
 import com.ucs.contactmessage.mapper.ContactMessageMapper;
+import com.ucs.contactmessage.messages.ContactMessageType;
 import com.ucs.contactmessage.messages.Messages;
 import com.ucs.contactmessage.repository.ContactMessageRepository;
 import com.ucs.contactmessage.service.IContactMessageService;
 import com.ucs.exception.ConflictException;
 import com.ucs.exception.MessageType;
 import com.ucs.exception.ResourceNotFoundException;
+import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.response.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,7 +38,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
         final ContactMessage contactMessage = contactMessageMapper.toContactMessage(contactMessageRequest);
         final ContactMessage savedMessage = contactMessageRepository.save(contactMessage);
         return ResponseMessage.<ContactMessageResponse>builder()
-                .message(Messages.getMessage(MessageType.SAVED.getMessage()))
+                .message(Messages.getMessage(ContactMessageType.SUCCESS_SAVED.getMessage()))
                 .httpStatus(HttpStatus.CREATED)
                 .object(contactMessageMapper.toContactMessageResponse(savedMessage))
                 .build();
@@ -79,7 +81,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
     public String deleteById(Long id) {
         getContactMessageById(id);
         contactMessageRepository.deleteById(id);
-        return Messages.getMessage(MessageType.DELETED.getMessage());
+        return Messages.getMessage(ContactMessageType.SUCCESS_DELETED.getMessage());
     }
 
     public ResponseMessage<ContactMessageResponse> updateMessageById(Long id, ContactMessageRequest contactMessageRequest) {
@@ -90,7 +92,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
         ContactMessageResponse response = contactMessageMapper.toContactMessageResponse(savedContactMessage);
 
         return ResponseMessage.<ContactMessageResponse>builder()
-                .message(Messages.getMessage(MessageType.UPDATE.getMessage()))
+                .message(Messages.getMessage( ContactMessageType.SUCCESS_UPDATED.getMessage()))
                 .httpStatus(HttpStatus.OK)
                 .object(response)
                 .build();
@@ -98,7 +100,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
 
     public ContactMessage getContactMessageById(Long id) {
         return contactMessageRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(MessageType.NOT_FOUND));
+                new ResourceNotFoundException(MessageType.CONTACT_MESSAGE_NOT_FOUND));
     }
 
     public ContactMessageResponse getContactMessageResponseById(Long id) {
