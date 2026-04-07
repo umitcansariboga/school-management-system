@@ -17,7 +17,7 @@ public class EducationTerm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long LessonId;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

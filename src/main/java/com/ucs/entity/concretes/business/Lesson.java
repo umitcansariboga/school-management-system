@@ -15,7 +15,7 @@ public class Lesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long LessonId;
+    private Long lessonId;
 
     @Column(nullable = false)
     private String lessonName;

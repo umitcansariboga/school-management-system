@@ -33,8 +33,8 @@ public class MeetRequest {
 
     @NotNull(message = "Please enter end time")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private LocalTime endTime;
+    private LocalTime stopTime;
 
     @NotNull(message = "Please select students")
-    private Set<Long> studentIds;
+    private Set<Long> studentsIds;
 }

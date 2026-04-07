@@ -17,9 +17,9 @@ public class StudentInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer absentee;
     private Double midtermExam;
     private Double finalExam;
+    private Integer absentee;
     private Double examAverage;
 
     private String infoNote;

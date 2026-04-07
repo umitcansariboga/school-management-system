@@ -22,7 +22,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long LessonId;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -70,7 +70,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "lesson_program_id")
     )
-    private Set<LessonProgram> lessonProgramList;
+    private Set<LessonProgram> lessonProgramSet;
 
     @ManyToMany(mappedBy = "studentList")
     private Set<Meet> meetList;

@@ -25,15 +25,15 @@ public class StudentInfoRequest {
     private Double finalExam;
 
     @NotNull(message = "Please enter absentee")
-    private Internal absentee;
+    private Integer absentee;
 
     @NotBlank(message = "Please enter info")
-    @Size(min = 10,max = 200, message = "Info should be at least 10 chars")
+    @Size(min = 10, max = 200, message = "Info should be at least 10 chars")
     private String infoNote;
 
-    @NotBlank(message = "Please select lesson")
+    @NotNull(message = "Please select lesson")
     private Long lessonId;
 
-    @NotBlank(message = "Please select student")
+    @NotNull(message = "Please select student")
     private Long studentId;
 }
