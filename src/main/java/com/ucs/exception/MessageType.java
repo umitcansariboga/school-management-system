@@ -7,8 +7,8 @@ public enum MessageType {
 
     // --- 404 NOT FOUND ---
     ROLE_NOT_FOUND("404", "user.role.not.found"),
-    USER_NOT_FOUND_ID("404", "user.not.found.id"),
-    USER_NOT_FOUND_USERNAME("404", "user.not.found.username"),
+    USER_NOT_FOUND_WITH_ID("404", "user.not.found.id"),
+    USER_NOT_FOUND_WITH_USERNAME("404", "user.not.found.username"),
     ADVISOR_TEACHER_NOT_FOUND("404", "advisor.teacher.not.found"),
     EDUCATION_TERM_NOT_FOUND("404", "education.term.not.found"),
     LESSON_NOT_FOUND_FIELD("404", "lesson.not.found.field"),
@@ -42,7 +42,15 @@ public enum MessageType {
 
     // --- 403 FORBIDDEN ---
     NOT_PERMITTED("403", "error.not.permitted"),
-    USER_DOES_NOT_HAVE_ROLE("403", "user.no.role");
+    USER_DOES_NOT_HAVE_ROLE("403", "user.no.role"),
+
+    // --- 500 GLOBAL ---
+    GLOBAL_EXCEPTION("500", "error.unexpected.occured"),
+
+    // --- CONTACT MESSAGE SUCCESS ---
+    SUCCESS_SAVED("201", "contact.message.saved"),
+    SUCCESS_UPDATED("200", "contact.message.updated"),
+    SUCCESS_DELETED("200", "contact.message.deleted");
 
     private final String code;
     private final String message; // Properties dosyasındaki KEY

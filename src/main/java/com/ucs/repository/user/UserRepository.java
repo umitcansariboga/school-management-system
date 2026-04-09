@@ -1,4 +1,4 @@
-package com.ucs.repository.userRepository;
+package com.ucs.repository.user;
 
 import com.ucs.entity.concretes.user.User;
 import com.ucs.entity.enums.RoleType;
@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Double> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 
     boolean existsByUsername(String username);
 
-    boolean existsBySnn(String ssn);
+    boolean existsBySsn(String ssn);
 
     boolean existsByPhoneNumber(String phone);
 
@@ -39,5 +39,5 @@ public interface UserRepository extends JpaRepository<User, Double> {
 
     boolean existsByUserRole_RoleType(RoleType roleType);
 
-    List<User> findAllByInIn(Long[] studentIds);
+    List<User> findAllByIdIn(Long[] studentIds);
 }

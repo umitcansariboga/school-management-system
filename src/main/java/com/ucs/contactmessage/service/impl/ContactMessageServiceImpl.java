@@ -4,19 +4,15 @@ import com.ucs.contactmessage.dto.ContactMessageRequest;
 import com.ucs.contactmessage.dto.ContactMessageResponse;
 import com.ucs.contactmessage.entity.ContactMessage;
 import com.ucs.contactmessage.mapper.ContactMessageMapper;
-import com.ucs.contactmessage.messages.ContactMessageType;
-import com.ucs.contactmessage.messages.Messages;
 import com.ucs.contactmessage.repository.ContactMessageRepository;
 import com.ucs.contactmessage.service.IContactMessageService;
 import com.ucs.exception.ConflictException;
 import com.ucs.exception.MessageType;
 import com.ucs.exception.ResourceNotFoundException;
-import com.ucs.messages.SuccessMessageType;
-import com.ucs.payload.response.ResponseMessage;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,14 +30,10 @@ public class ContactMessageServiceImpl implements IContactMessageService {
     private final ContactMessageMapper contactMessageMapper;
 
     @Override
-    public ResponseMessage<ContactMessageResponse> save(ContactMessageRequest contactMessageRequest) {
+    public ContactMessageResponse save(ContactMessageRequest contactMessageRequest) {
         final ContactMessage contactMessage = contactMessageMapper.toContactMessage(contactMessageRequest);
         final ContactMessage savedMessage = contactMessageRepository.save(contactMessage);
-        return ResponseMessage.<ContactMessageResponse>builder()
-                .message(Messages.getMessage(ContactMessageType.SUCCESS_SAVED.getMessage()))
-                .httpStatus(HttpStatus.CREATED)
-                .object(contactMessageMapper.toContactMessageResponse(savedMessage))
-                .build();
+        return contactMessageMapper.toContactMessageResponse(savedMessage);
     }
 
     @Override
@@ -78,29 +70,24 @@ public class ContactMessageServiceImpl implements IContactMessageService {
         }
     }
 
-    public String deleteById(Long id) {
-        getContactMessageById(id);
-        contactMessageRepository.deleteById(id);
-        return Messages.getMessage(ContactMessageType.SUCCESS_DELETED.getMessage());
+    @Transactional
+    public ContactMessageResponse deleteById(Long id) {
+       ContactMessage contactMessage=getContactMessageById(id);
+         contactMessageRepository.delete(contactMessage);
+        return contactMessageMapper.toContactMessageResponse(contactMessage);
     }
 
-    public ResponseMessage<ContactMessageResponse> updateMessageById(Long id, ContactMessageRequest contactMessageRequest) {
+    public ContactMessageResponse updateMessageById(Long id, ContactMessageRequest contactMessageRequest) {
         ContactMessage contactMessage = getContactMessageById(id);
 
         contactMessageMapper.updateContactMessageFromDto(contactMessageRequest,contactMessage);
         ContactMessage savedContactMessage = contactMessageRepository.save(contactMessage);
-        ContactMessageResponse response = contactMessageMapper.toContactMessageResponse(savedContactMessage);
-
-        return ResponseMessage.<ContactMessageResponse>builder()
-                .message(Messages.getMessage( ContactMessageType.SUCCESS_UPDATED.getMessage()))
-                .httpStatus(HttpStatus.OK)
-                .object(response)
-                .build();
+        return contactMessageMapper.toContactMessageResponse(savedContactMessage);
     }
 
     public ContactMessage getContactMessageById(Long id) {
         return contactMessageRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(MessageType.CONTACT_MESSAGE_NOT_FOUND));
+                new ResourceNotFoundException(MessageType.CONTACT_MESSAGE_NOT_FOUND,id));
     }
 
     public ContactMessageResponse getContactMessageResponseById(Long id) {

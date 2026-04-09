@@ -1,4 +1,4 @@
-package com.ucs.repository.userRepository;
+package com.ucs.repository.user;
 
 import com.ucs.entity.concretes.user.UserRole;
 import com.ucs.entity.enums.RoleType;
