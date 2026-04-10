@@ -39,7 +39,7 @@ public class MethodHelper {
 
     public void checkRole(User user, RoleType roleType) {
         if (user.getUserRole() == null || !user.getUserRole().getRoleType().equals(roleType)) {
-            throw new BadRequestException(MessageType.USER_DOES_NOT_HAVE_ROLE,user.getId(),roleType);
+            throw new ResourceNotFoundException(MessageType.USER_DOES_NOT_HAVE_ROLE, user.getId(), roleType);
         }
     }
 }
