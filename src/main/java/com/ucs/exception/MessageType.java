@@ -39,6 +39,8 @@ public enum MessageType {
     TIME_NOT_VALID("400", "error.time.not.valid"),
     USER_ROLE_MISMATCH("400", "user.role.mismatch"),
     WRONG_DATE_FORMAT("400", "contact.error.date.format"),
+    ONLY_ONE_ADMIN("400","user.only.one.admin"),
+    ONLY_ONE_MANAGER("400","user.only.one.manager"),
 
     // --- 403 FORBIDDEN ---
     NOT_PERMITTED("403", "error.not.permitted"),
@@ -50,7 +52,14 @@ public enum MessageType {
     // --- CONTACT MESSAGE SUCCESS ---
     SUCCESS_SAVED("201", "contact.message.saved"),
     SUCCESS_UPDATED("200", "contact.message.updated"),
-    SUCCESS_DELETED("200", "contact.message.deleted");
+    SUCCESS_DELETED("200", "contact.message.deleted"),
+
+    // --- USER MESSAGE ---
+    SUCCESS_USER_SAVED("201","success.user.saved"),
+    SUCCESS_USER_FOUND("200","success.user.found"),
+    SUCCESS_USER_DELETED("200","success.user.deleted"),
+    SUCCESS_USER_UPDATED("200","success.user.updated"),
+    SUCCESS_USER_PROFILE_UPDATED("200","success.user.profile.updated");
 
     private final String code;
     private final String message; // Properties dosyasındaki KEY

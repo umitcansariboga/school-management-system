@@ -37,6 +37,15 @@ public class ResponseMessage<E> {
                 .build();
     }
 
+    public static <E> ResponseMessage<E> success(E object, MessageType messageType, Object... args) {
+        return ResponseMessage.<E>builder()
+                .success(true)
+                .message(Messages.getMessage(messageType.getMessage(),args))
+                .object(object)
+                .timeStamp(LocalDateTime.now())
+                .build();
+    }
+
     public static <E> ResponseMessage<E> error(MessageType messageType, String errorCode, WebRequest request,Object... args) {
         return ResponseMessage.<E>builder()
                 .success(false)

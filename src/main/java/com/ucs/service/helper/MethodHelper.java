@@ -8,6 +8,7 @@ import com.ucs.exception.ResourceNotFoundException;
 import com.ucs.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.WebRequest;
 
 @Component
 @RequiredArgsConstructor
@@ -41,5 +42,9 @@ public class MethodHelper {
         if (user.getUserRole() == null || !user.getUserRole().getRoleType().equals(roleType)) {
             throw new ResourceNotFoundException(MessageType.USER_DOES_NOT_HAVE_ROLE, user.getId(), roleType);
         }
+    }
+
+    public String getPath(WebRequest request){
+        return request.getDescription(false);
     }
 }
