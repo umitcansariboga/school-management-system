@@ -3,9 +3,8 @@ package com.ucs.contactmessage.controller.impl;
 import com.ucs.contactmessage.controller.IContactMessageController;
 import com.ucs.contactmessage.dto.ContactMessageRequest;
 import com.ucs.contactmessage.dto.ContactMessageResponse;
-import com.ucs.contactmessage.messages.ContactMessageType;
 import com.ucs.contactmessage.service.IContactMessageService;
-import com.ucs.exception.MessageType;
+import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.response.ResponseMessage;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,7 @@ public class ContactMessageControllerImpl implements IContactMessageController {
     public ResponseEntity<ResponseMessage<ContactMessageResponse>> saveContact(@RequestBody @Valid ContactMessageRequest contactMessageRequest,
                                                                                WebRequest request) {
         ContactMessageResponse response = contactMessageService.save(contactMessageRequest);
-        return ResponseEntity.ok(ResponseMessage.success(response,MessageType.SUCCESS_SAVED,request));
+        return ResponseEntity.ok(ResponseMessage.success(response,SuccessMessageType.SUCCESS_SAVED,request));
     }
 
     @Override
@@ -78,7 +77,7 @@ public class ContactMessageControllerImpl implements IContactMessageController {
                                                                               WebRequest request) {
         ContactMessageResponse response=contactMessageService.deleteById(id);
 
-        return ResponseEntity.ok(ResponseMessage.success(response,MessageType.SUCCESS_DELETED,request));
+        return ResponseEntity.ok(ResponseMessage.success(response, SuccessMessageType.SUCCESS_DELETED,request));
     }
 
     @Override
@@ -88,6 +87,6 @@ public class ContactMessageControllerImpl implements IContactMessageController {
             WebRequest request) {
 
         ContactMessageResponse response = contactMessageService.updateMessageById(id, contactMessageRequest);
-        return ResponseEntity.ok(ResponseMessage.success(response,MessageType.SUCCESS_UPDATED,request));
+        return ResponseEntity.ok(ResponseMessage.success(response,SuccessMessageType.SUCCESS_UPDATED,request));
     }
 }

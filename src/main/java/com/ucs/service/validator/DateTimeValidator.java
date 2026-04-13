@@ -2,7 +2,7 @@ package com.ucs.service.validator;
 
 import com.ucs.entity.concretes.business.LessonProgram;
 import com.ucs.exception.BadRequestException;
-import com.ucs.exception.MessageType;
+import com.ucs.exception.ErrorMessageType;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
@@ -13,7 +13,7 @@ public class DateTimeValidator {
 
     public void checkTimeWithException(LocalTime start, LocalTime stop) {
         if (!start.isBefore(stop)) {
-            throw new BadRequestException(MessageType.TIME_NOT_VALID);
+            throw new BadRequestException(ErrorMessageType.TIME_NOT_VALID);
         }
     }
 
@@ -33,7 +33,7 @@ public class DateTimeValidator {
         for (int i = 0; i < array.length; i++) {
             for (int j = i + 1; j < array.length; j++) {
                 if ((isOverLapping(array[i], array[j]))) {
-                    throw new BadRequestException(MessageType.LESSON_PROGRAM_ALREADY_EXISTS);
+                    throw new BadRequestException(ErrorMessageType.LESSON_PROGRAM_ALREADY_EXISTS);
                 }
             }
         }
@@ -45,7 +45,7 @@ public class DateTimeValidator {
                         .anyMatch(existing -> isOverLapping(existing, request)));
 
         if (hasOverlap) {
-            throw new BadRequestException(MessageType.LESSON_PROGRAM_ALREADY_EXISTS);
+            throw new BadRequestException(ErrorMessageType.LESSON_PROGRAM_ALREADY_EXISTS);
         }
     }
 

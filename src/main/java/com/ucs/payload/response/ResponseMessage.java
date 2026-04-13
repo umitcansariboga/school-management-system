@@ -2,12 +2,12 @@ package com.ucs.payload.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ucs.contactmessage.messages.Messages;
-import com.ucs.exception.MessageType;
+import com.ucs.exception.ErrorMessageType;
+import com.ucs.messages.SuccessMessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.WebRequest;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ public class ResponseMessage<E> {
     private String errorCode;
     private String path;
 
-    public static <E> ResponseMessage<E> success(E object, MessageType messageType, WebRequest request,Object... args) {
+    public static <E> ResponseMessage<E> success(E object, SuccessMessageType messageType, WebRequest request, Object... args) {
         return ResponseMessage.<E>builder()
                 .success(true)
                 .message(Messages.getMessage(messageType.getMessage(),args))
@@ -37,7 +37,7 @@ public class ResponseMessage<E> {
                 .build();
     }
 
-    public static <E> ResponseMessage<E> success(E object, MessageType messageType, Object... args) {
+    public static <E> ResponseMessage<E> success(E object, SuccessMessageType messageType, Object... args) {
         return ResponseMessage.<E>builder()
                 .success(true)
                 .message(Messages.getMessage(messageType.getMessage(),args))
@@ -46,7 +46,7 @@ public class ResponseMessage<E> {
                 .build();
     }
 
-    public static <E> ResponseMessage<E> error(MessageType messageType, String errorCode, WebRequest request,Object... args) {
+    public static <E> ResponseMessage<E> error(ErrorMessageType messageType, String errorCode, WebRequest request, Object... args) {
         return ResponseMessage.<E>builder()
                 .success(false)
                 .message(Messages.getMessage(messageType.getMessage(),args))

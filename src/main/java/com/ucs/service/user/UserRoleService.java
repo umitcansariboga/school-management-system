@@ -2,7 +2,7 @@ package com.ucs.service.user;
 
 import com.ucs.entity.concretes.user.UserRole;
 import com.ucs.entity.enums.RoleType;
-import com.ucs.exception.MessageType;
+import com.ucs.exception.ErrorMessageType;
 import com.ucs.exception.ResourceNotFoundException;
 import com.ucs.repository.user.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class UserRoleService {
 
         return userRoleRepository.findByRoleType(roleType)
                 .orElseThrow(()->
-                        new ResourceNotFoundException(MessageType.ROLE_NOT_FOUND));
+                        new ResourceNotFoundException(ErrorMessageType.ROLE_NOT_FOUND));
     }
 
     @Cacheable(value = "allUserRoles")

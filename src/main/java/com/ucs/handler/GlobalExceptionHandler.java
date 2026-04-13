@@ -2,7 +2,7 @@ package com.ucs.handler;
 
 import com.ucs.contactmessage.messages.Messages;
 import com.ucs.exception.BaseException;
-import com.ucs.exception.MessageType;
+import com.ucs.exception.ErrorMessageType;
 import com.ucs.payload.response.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -64,8 +64,8 @@ public class GlobalExceptionHandler {
 
         ResponseMessage<Void> response = ResponseMessage.<Void>builder()
                 .success(false)
-                .message(Messages.getMessage(MessageType.GLOBAL_EXCEPTION.getMessage()))
-                .errorCode(MessageType.GLOBAL_EXCEPTION.getCode())
+                .message(Messages.getMessage(ErrorMessageType.GLOBAL_EXCEPTION.getMessage()))
+                .errorCode(ErrorMessageType.GLOBAL_EXCEPTION.getCode())
                 .timeStamp(LocalDateTime.now())
                 .path(request.getDescription(false))
                 .build();
