@@ -10,9 +10,9 @@ import org.springframework.http.HttpStatus;
 public class BaseException extends RuntimeException {
     private final String errorCode;
     private final HttpStatus httpStatus;
-    private final MessageType messageType;
+    private final ErrorMessageType messageType;
 
-    public BaseException(MessageType messageType,HttpStatus httpStatus) {
+    public BaseException(ErrorMessageType messageType, HttpStatus httpStatus) {
         super(Messages.getMessage(messageType.getMessage()));
         this.errorCode = messageType.getCode();
         this.httpStatus=httpStatus;
@@ -20,7 +20,7 @@ public class BaseException extends RuntimeException {
         logError();
     }
 
-    public BaseException(MessageType messageType,HttpStatus httpStatus, Object... args) {
+    public BaseException(ErrorMessageType messageType, HttpStatus httpStatus, Object... args) {
         super(Messages.getMessage(messageType.getMessage(), args));
         this.errorCode = messageType.getCode();
         this.httpStatus=httpStatus;

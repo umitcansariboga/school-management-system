@@ -43,7 +43,12 @@ public enum SuccessMessageType {
     MEET_SAVED("201", "success.meet.saved"),
     MEET_UPDATED("200", "success.meet.updated"),
     MEET_FOUND("200", "success.meet.found"),
-    MEET_DELETED("200", "success.meet.deleted");
+    MEET_DELETED("200", "success.meet.deleted"),
+
+    // --- CONTACT MESSAGE SUCCESS ---
+    SUCCESS_SAVED("201", "contact.message.saved"),
+    SUCCESS_UPDATED("200", "contact.message.updated"),
+    SUCCESS_DELETED("200", "contact.message.deleted");
 
     private final String code;
     private final String message; // Properties dosyasındaki KEY

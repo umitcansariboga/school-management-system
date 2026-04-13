@@ -13,33 +13,33 @@ import org.mapstruct.*;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    User toUser(BaseUserRequest baseUserRequest);
+    User requestToUser(BaseUserRequest baseUserRequest);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "userRole", source = "userRole.roleName")
-    UserResponse toUserResponse(User user);
+    UserResponse userToUserResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     User updateToUserFromRequest(BaseUserRequest baseUserRequest, @MappingTarget User user);
 
     @Mapping(target = "id", ignore = true)
-    User toTeacherUser(TeacherRequest teacherRequest);
+    User requestToTeacherUser(TeacherRequest teacherRequest);
 
     @Mapping(target = "userId", source = "id")
     @Mapping(target = "userRole", source = "userRole.roleName")
-    TeacherResponse toTeacherResponse(User teacher);
+    TeacherResponse userToTeacherResponse(User teacher);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     User updateToTeacherUserFromRequest(TeacherRequest teacherRequest, @MappingTarget User user);
 
     @Mapping(target = "id", ignore = true)
-    User toStudentUser(StudentRequest studentRequest);
+    User requestToStudentUser(StudentRequest studentRequest);
 
     @Mapping(target = "userId", source = "id")
     @Mapping(target = "userRole", source = "userRole.roleName")
-    StudentResponse toStudentResponse(User student);
+    StudentResponse userToStudentResponse(User student);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)

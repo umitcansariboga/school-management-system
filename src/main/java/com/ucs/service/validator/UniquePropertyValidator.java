@@ -2,7 +2,7 @@ package com.ucs.service.validator;
 
 import com.ucs.entity.concretes.user.User;
 import com.ucs.exception.ConflictException;
-import com.ucs.exception.MessageType;
+import com.ucs.exception.ErrorMessageType;
 import com.ucs.payload.request.abstracts.AbstractUserRequest;
 import com.ucs.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +16,19 @@ public class UniquePropertyValidator {
 
     public void checkDuplicate(String username, String ssn, String phone, String email) {
         if (username != null && userRepository.existsByUsername(username)) {
-            throw new ConflictException(MessageType.USERNAME_ALREADY_REGISTERED, username);
+            throw new ConflictException(ErrorMessageType.USERNAME_ALREADY_REGISTERED, username);
         }
 
         if (ssn != null && userRepository.existsBySsn(ssn)) {
-            throw new ConflictException(MessageType.SSN_ALREADY_REGISTERED, ssn);
+            throw new ConflictException(ErrorMessageType.SSN_ALREADY_REGISTERED, ssn);
         }
 
         if (phone != null && userRepository.existsByPhoneNumber(phone)) {
-            throw new ConflictException(MessageType.PHONE_ALREADY_REGISTERED, phone);
+            throw new ConflictException(ErrorMessageType.PHONE_ALREADY_REGISTERED, phone);
         }
 
         if (email != null && userRepository.existsByEmail(email)) {
-            throw new ConflictException(MessageType.EMAIL_ALREADY_REGISTERED, email);
+            throw new ConflictException(ErrorMessageType.EMAIL_ALREADY_REGISTERED, email);
         }
     }
 

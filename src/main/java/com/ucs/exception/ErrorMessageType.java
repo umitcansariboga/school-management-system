@@ -3,7 +3,7 @@ package com.ucs.exception;
 import lombok.Getter;
 
 @Getter
-public enum MessageType {
+public enum ErrorMessageType {
 
     // --- 404 NOT FOUND ---
     ROLE_NOT_FOUND("404", "user.role.not.found"),
@@ -47,24 +47,12 @@ public enum MessageType {
     USER_DOES_NOT_HAVE_ROLE("403", "user.no.role"),
 
     // --- 500 GLOBAL ---
-    GLOBAL_EXCEPTION("500", "error.unexpected.occured"),
-
-    // --- CONTACT MESSAGE SUCCESS ---
-    SUCCESS_SAVED("201", "contact.message.saved"),
-    SUCCESS_UPDATED("200", "contact.message.updated"),
-    SUCCESS_DELETED("200", "contact.message.deleted"),
-
-    // --- USER MESSAGE ---
-    SUCCESS_USER_SAVED("201","success.user.saved"),
-    SUCCESS_USER_FOUND("200","success.user.found"),
-    SUCCESS_USER_DELETED("200","success.user.deleted"),
-    SUCCESS_USER_UPDATED("200","success.user.updated"),
-    SUCCESS_USER_PROFILE_UPDATED("200","success.user.profile.updated");
+    GLOBAL_EXCEPTION("500", "error.unexpected.occured");
 
     private final String code;
     private final String message; // Properties dosyasındaki KEY
 
-    MessageType(String code, String message) {
+    ErrorMessageType(String code, String message) {
         this.code = code;
         this.message = message;
     }

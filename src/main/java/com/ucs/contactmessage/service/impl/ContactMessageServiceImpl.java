@@ -7,7 +7,7 @@ import com.ucs.contactmessage.mapper.ContactMessageMapper;
 import com.ucs.contactmessage.repository.ContactMessageRepository;
 import com.ucs.contactmessage.service.IContactMessageService;
 import com.ucs.exception.ConflictException;
-import com.ucs.exception.MessageType;
+import com.ucs.exception.ErrorMessageType;
 import com.ucs.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +66,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
                     .map(contactMessageMapper::toContactMessageResponse)
                     .collect(Collectors.toList());
         } catch (DateTimeParseException e) {
-            throw new ConflictException(MessageType.WRONG_DATE_FORMAT, beginDateString);
+            throw new ConflictException(ErrorMessageType.WRONG_DATE_FORMAT, beginDateString);
         }
     }
 
@@ -87,7 +87,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
 
     public ContactMessage getContactMessageById(Long id) {
         return contactMessageRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(MessageType.CONTACT_MESSAGE_NOT_FOUND,id));
+                new ResourceNotFoundException(ErrorMessageType.CONTACT_MESSAGE_NOT_FOUND,id));
     }
 
     public ContactMessageResponse getContactMessageResponseById(Long id) {
