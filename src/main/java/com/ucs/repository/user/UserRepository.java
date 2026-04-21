@@ -39,5 +39,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUserRole_RoleType(RoleType roleType);
 
-    List<User> findAllByIdIn(Long[] studentIds);
+    List<User> findAllByIdIn(List<Long> studentIds);
 }

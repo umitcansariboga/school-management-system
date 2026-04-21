@@ -6,7 +6,7 @@ import com.ucs.contactmessage.entity.ContactMessage;
 import com.ucs.contactmessage.mapper.ContactMessageMapper;
 import com.ucs.contactmessage.repository.ContactMessageRepository;
 import com.ucs.contactmessage.service.IContactMessageService;
-import com.ucs.exception.ConflictException;
+import com.ucs.contactmessage.service.helper.DateHelper;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
@@ -15,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +25,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
 
     private final ContactMessageRepository contactMessageRepository;
     private final ContactMessageMapper contactMessageMapper;
+    private final DateHelper dateHelper;
 
     @Override
     public ContactMessageResponse save(ContactMessageRequest contactMessageRequest) {
@@ -37,57 +35,50 @@ public class ContactMessageServiceImpl implements IContactMessageService {
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly=true)
     public Page<ContactMessageResponse> getAll(Pageable pageable) {
         return contactMessageRepository.findAll(pageable).map(contactMessageMapper::toContactMessageResponse);
     }
 
     @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Page<ContactMessageResponse> searchByEmail(String email, Pageable pageable) {
         return contactMessageRepository.findbyEmail(email, pageable).map(contactMessageMapper::toContactMessageResponse);
     }
 
     @Override
+    @Transactional
     public Page<ContactMessageResponse> searchBySubject(String subject, Pageable pageable) {
         return contactMessageRepository.findBySubject(subject, pageable).map(contactMessageMapper::toContactMessageResponse);
     }
 
-    public List<ContactMessageResponse> searchByDateBetween(String beginDateString, String endDateString) {
-        try {
-            LocalDate beginDate = LocalDate.parse(beginDateString);
-            LocalDate endDate = LocalDate.parse(endDateString);
-
-            LocalDateTime startDateTime = beginDate.atStartOfDay();
-            LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
-
-            List<ContactMessage> rawMessages = contactMessageRepository.findByDateTimeBetween(startDateTime, endDateTime);
-
-            return rawMessages
-                    .stream()
-                    .map(contactMessageMapper::toContactMessageResponse)
-                    .collect(Collectors.toList());
-        } catch (DateTimeParseException e) {
-            throw new ConflictException(ErrorMessageType.WRONG_DATE_FORMAT, beginDateString);
-        }
+    public List<ContactMessageResponse> searchByDateBetween(String beginDate, String endDate) {
+        LocalDateTime[] range = dateHelper.getRange(beginDate, endDate);
+        return contactMessageRepository.findByDateTimeBetween(range[0], range[1])
+                .stream()
+                .map(contactMessageMapper::toContactMessageResponse)
+                .collect(Collectors.toList());
     }
+
 
     @Transactional
     public ContactMessageResponse deleteById(Long id) {
-       ContactMessage contactMessage=getContactMessageById(id);
-         contactMessageRepository.delete(contactMessage);
+        ContactMessage contactMessage = getContactMessageById(id);
+        contactMessageRepository.delete(contactMessage);
         return contactMessageMapper.toContactMessageResponse(contactMessage);
     }
 
     public ContactMessageResponse updateMessageById(Long id, ContactMessageRequest contactMessageRequest) {
         ContactMessage contactMessage = getContactMessageById(id);
 
-        contactMessageMapper.updateContactMessageFromDto(contactMessageRequest,contactMessage);
+        contactMessageMapper.updateContactMessageFromDto(contactMessageRequest, contactMessage);
         ContactMessage savedContactMessage = contactMessageRepository.save(contactMessage);
         return contactMessageMapper.toContactMessageResponse(savedContactMessage);
     }
 
     public ContactMessage getContactMessageById(Long id) {
         return contactMessageRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(ErrorMessageType.CONTACT_MESSAGE_NOT_FOUND,id));
+                new ResourceNotFoundException(ErrorMessageType.CONTACT_MESSAGE_NOT_FOUND, id));
     }
 
     public ContactMessageResponse getContactMessageResponseById(Long id) {

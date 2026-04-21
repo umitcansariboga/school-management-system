@@ -1,4 +1,4 @@
-package com.ucs.service.user;
+package com.ucs.service.user.impl;
 
 public class AuthenticationService {
 }

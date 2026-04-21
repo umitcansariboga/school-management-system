@@ -1,4 +1,4 @@
-package com.ucs.service.user;
+package com.ucs.service.user.impl;
 
 import com.ucs.entity.concretes.user.UserRole;
 import com.ucs.entity.enums.RoleType;
@@ -18,15 +18,15 @@ public class UserRoleService {
     private final UserRoleRepository userRoleRepository;
 
     @Cacheable(value = "userRole")
-    public UserRole getUserRole(RoleType roleType){
+    public UserRole getUserRole(RoleType roleType) {
 
         return userRoleRepository.findByRoleType(roleType)
-                .orElseThrow(()->
+                .orElseThrow(() ->
                         new ResourceNotFoundException(ErrorMessageType.ROLE_NOT_FOUND));
     }
 
     @Cacheable(value = "allUserRoles")
-    public List<UserRole> getAllUserRoles(){
+    public List<UserRole> getAllUserRoles() {
         return userRoleRepository.findAll();
     }
 }
