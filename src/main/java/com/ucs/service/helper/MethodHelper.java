@@ -1,14 +1,17 @@
 package com.ucs.service.helper;
 
 import com.ucs.entity.concretes.business.EducationTerm;
+import com.ucs.entity.concretes.business.Lesson;
 import com.ucs.entity.concretes.user.User;
 import com.ucs.entity.enums.RoleType;
 import com.ucs.exception.BadRequestException;
+import com.ucs.exception.ConflictException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.exception.ResourceNotFoundException;
 import com.ucs.payload.request.business.EducationTermRequest;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.business.EducationTermRepository;
+import com.ucs.repository.business.LessonRepository;
 import com.ucs.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,7 @@ public class MethodHelper {
 
     private final UserRepository userRepository;
     private final EducationTermRepository educationTermRepository;
+    private final LessonRepository lessonRepository;
 
 
     public User getUserById(Long userId) {
@@ -122,5 +126,17 @@ public class MethodHelper {
                 new ResourceNotFoundException(ErrorMessageType.EDUCATION_TERM_NOT_FOUND,id));
     }
 
+    public void checkLessonExistenceByName(String lessonName){
+        boolean lessonExist=lessonRepository.existsByLessonNameEqualsIgnoreCase(lessonName);
+
+        if(lessonExist){
+            throw new ConflictException(ErrorMessageType.LESSON_ALREADY_EXISTS_NAME);
+        }
+    }
+
+    public Lesson getLessonById(Long id){
+        return lessonRepository.findById(id).orElseThrow(()->
+                new ResourceNotFoundException(ErrorMessageType.LESSON_NOT_FOUND_FIELD,id));
+    }
 
 }

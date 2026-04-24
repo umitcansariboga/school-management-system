@@ -20,7 +20,7 @@ public class AuthResponse {
     private String ssn;
 
     @JsonView(Views.Base.class)
-    private String role;
+    private String userRole;
 
     @JsonView(Views.User.class)
     private String token;
