@@ -38,7 +38,7 @@ public interface UserMapper {
 
     //----------------------------------------------------------
     @Mapping(target = "id", ignore = true)
-    User requestToTeacherUser(TeacherRequest teacherRequest);
+    User teacherRequestToUser(TeacherRequest teacherRequest);
 
     @Mapping(target = "userId", source = "id")
     @Mapping(target = "userRole", source = "userRole.roleName")
@@ -55,15 +55,18 @@ public interface UserMapper {
     @Mapping(target = "builtIn", ignore = true)
     @Mapping(target = "userRole", ignore = true)
     User updateToTeacherUserByAdminRequest(TeacherUpdateByAdminRequest teacherUpdateByAdminRequest, @MappingTarget User user);
+
     //-------------------------------------------------------------
     @Mapping(target = "id", ignore = true)
-    User requestToStudentUser(StudentRequest studentRequest);
+    User studentRequestToUser(StudentRequest studentRequest);
 
     @Mapping(target = "userId", source = "id")
     @Mapping(target = "userRole", source = "userRole.roleName")
     StudentResponse userToStudentResponse(User student);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "ssn", ignore = true)
+    @Mapping(target = "username", ignore = true)
     User updateToStudentUserFromRequest(StudentUpdateRequest studentUpdateRequest, @MappingTarget User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

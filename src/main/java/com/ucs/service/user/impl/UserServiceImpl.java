@@ -7,8 +7,12 @@ import com.ucs.exception.BadRequestException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.mappers.UserMapper;
+import com.ucs.payload.request.UpdatePasswordRequest;
+import com.ucs.payload.request.updateRequest.UserBaseUpdateRequest;
+import com.ucs.payload.request.updateRequest.UserUpdateByAdminRequest;
+import com.ucs.payload.request.updateRequest.UserUpdateByAssistantRequest;
+import com.ucs.payload.request.updateRequest.UserUpdateByManagerRequest;
 import com.ucs.payload.request.user.UserRequest;
-import com.ucs.payload.request.user.UserRequestWithoutPassword;
 import com.ucs.payload.response.abstracts.BaseUserResponse;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.user.UserRepository;
@@ -22,8 +26,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +43,7 @@ public class UserServiceImpl implements IUserService {
     private final MethodHelper methodHelper;
     private final UserRoleHelper userRoleHelper;
 
+    @Transactional
     public UserResponse saveUser(UserRequest userRequest, String userRole) {
 
         uniquePropertyValidator.checkDuplicate(
@@ -63,59 +69,6 @@ public class UserServiceImpl implements IUserService {
         User saveuser = userRepository.save(user);
         return userMapper.userToUserResponse(saveuser);
     }
-
-   /* private void assignRoleToUser(User user, String userRole, String username) {
-
-        if (userRole.equalsIgnoreCase(RoleType.ADMIN.name()) ||
-                userRole.equalsIgnoreCase(RoleType.ADMIN.getName())) {
-            if (userRepository.existsByUserRole_RoleType(RoleType.ADMIN)) {
-                throw new BadRequestException(ErrorMessageType.ONLY_ONE_ADMIN);
-            }
-            if (Objects.equals(username, "Admin")) {
-                user.setBuiltIn(Boolean.TRUE);
-            }
-
-            user.setUserRole(userRoleService.getUserRole(RoleType.ADMIN));
-            return;
-        }
-
-        if (userRole.equalsIgnoreCase(RoleType.MANAGER.name()) ||
-                userRole.equalsIgnoreCase(RoleType.MANAGER.getName())) {
-            if (userRepository.existsByUserRole_RoleType(RoleType.MANAGER)) {
-                throw new BadRequestException(ErrorMessageType.ONLY_ONE_MANAGER);
-            }
-
-            user.setUserRole(userRoleService.getUserRole(RoleType.MANAGER));
-            return;
-        }
-
-        if (userRole.equalsIgnoreCase(RoleType.ASSISTANT_MANAGER.name()) ||
-                userRole.equalsIgnoreCase(RoleType.ASSISTANT_MANAGER.getName())) {
-
-            user.setUserRole(userRoleService.getUserRole(RoleType.ASSISTANT_MANAGER));
-            return;
-        }
-
-        if (userRole.equalsIgnoreCase(RoleType.TEACHER.name()) ||
-                userRole.equalsIgnoreCase(RoleType.TEACHER.getName())) {
-
-            user.setUserRole(userRoleService.getUserRole(RoleType.TEACHER));
-            return;
-        }
-
-        if (userRole.equalsIgnoreCase(RoleType.STUDENT.name()) ||
-                userRole.equalsIgnoreCase(RoleType.STUDENT.getName())) {
-
-            user.setUserRole(userRoleService.getUserRole(RoleType.STUDENT));
-
-            if (user.getStudentNumber() == null) {
-                user.setStudentNumber(userRepository.getMaxStudentNumber() + 1);
-            }
-            return;
-        }
-
-        throw new ResourceNotFoundException(ErrorMessageType.ROLE_NOT_FOUND);
-    }*/
 
     public Page<UserResponse> getUsersByPage(int page, int size, String sort, String type, String userRole) {
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
@@ -150,6 +103,7 @@ public class UserServiceImpl implements IUserService {
 
     return ResponseEntity.ok(userService.deleteUserById(id, userPrincipal));
 }*/
+    @Transactional
     public String deleteUserById(Long userId, UserResponse authenticatedUser) {
         User targetUser = methodHelper.getUserById(userId);
 
@@ -175,7 +129,90 @@ public class UserServiceImpl implements IUserService {
         throw new BadRequestException(ErrorMessageType.NOT_PERMITTED);
     }
 
-    public BaseUserResponse updateUser(
+    @Override
+    @Transactional
+    public BaseUserResponse updateUserByAdmin(UserUpdateByAdminRequest userRequest, Long userId, UserResponse authenticatedUser) {
+        User targetUser = methodHelper.getUserById(userId);
+        validateUpdatePermission(authenticatedUser, targetUser);
+
+        updateBaseFields(targetUser, userRequest);
+        Optional.ofNullable(userRequest.getUsername()).ifPresent(targetUser::setUsername);
+        Optional.ofNullable(userRequest.getSsn()).ifPresent(targetUser::setSsn);
+        Optional.ofNullable(userRequest.getIsActive()).ifPresent(targetUser::setIsActive);
+        Optional.ofNullable(userRequest.getIsAdvisor()).ifPresent(targetUser::setIsAdvisor);
+
+        return userMapper.userToUserResponse(userRepository.save(targetUser));
+    }
+
+    @Override
+    @Transactional
+    public BaseUserResponse updateUserByManager(UserUpdateByManagerRequest userRequest, Long userId, UserResponse authenticatedUser) {
+        User targetUser = methodHelper.getUserById(userId);
+        validateUpdatePermission(authenticatedUser, targetUser);
+        updateBaseFields(targetUser, userRequest);
+        Optional.ofNullable(userRequest.getIsActive()).ifPresent(targetUser::setIsActive);
+        return userMapper.userToUserResponse(userRepository.save(targetUser));
+    }
+
+    @Override
+    @Transactional
+    public BaseUserResponse updateUserByAssistant(UserUpdateByAssistantRequest userRequest, Long userId, UserResponse authenticatedUser) {
+        User targetUser = methodHelper.getUserById(userId);
+        validateUpdatePermission(authenticatedUser, targetUser);
+        updateBaseFields(targetUser, userRequest);
+        return userMapper.userToUserResponse(userRepository.save(targetUser));
+    }
+
+    @Transactional
+    public void updateBaseFields(User user, UserBaseUpdateRequest userRequest) {
+        Optional.ofNullable(userRequest.getName()).ifPresent(user::setName);
+        Optional.ofNullable(userRequest.getSurname()).ifPresent(user::setSurname);
+        Optional.ofNullable(userRequest.getEmail()).ifPresent(user::setEmail);
+        Optional.ofNullable(userRequest.getPhoneNumber()).ifPresent(user::setPhoneNumber);
+        Optional.ofNullable(userRequest.getGender()).ifPresent(user::setGender);
+    }
+
+    private void validateUpdatePermission(UserResponse authenticatedUser, User targetUser) {
+
+        RoleType authenticatedRole = RoleType.valueOf(authenticatedUser.getUserRole());
+
+        RoleType targetRole = targetUser.getUserRole().getRoleType();
+
+        if (authenticatedRole == RoleType.ADMIN) {
+            return;
+        }
+
+        if (authenticatedRole == RoleType.MANAGER &&
+                (targetRole == RoleType.ASSISTANT_MANAGER ||
+                        targetRole == RoleType.TEACHER ||
+                        targetRole == RoleType.STUDENT)) {
+            return;
+        }
+
+        if (authenticatedRole == RoleType.ASSISTANT_MANAGER &&
+                (targetRole == RoleType.TEACHER ||
+                        targetRole == RoleType.STUDENT)) {
+            return;
+        }
+
+        throw new BadRequestException(ErrorMessageType.NOT_PERMITTED);
+    }
+
+    @Transactional
+    public void updatePassword(UpdatePasswordRequest request, UserResponse authenticatedUser) {
+        User user = methodHelper.getUserByUsername(authenticatedUser.getUsername());
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new BadRequestException(ErrorMessageType.PASSWORDS_DO_NOT_MATCH);
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
+        user.setPassword(encodedNewPassword);
+
+        userRepository.save(user);
+    }
+
+   /* public BaseUserResponse updateUser(
             UserRequest userRequest, Long userId, UserResponse authenticatedUser) {
 
         User targetUser = methodHelper.getUserById(userId);
@@ -244,31 +281,5 @@ public class UserServiceImpl implements IUserService {
                 .stream()
                 .map(userMapper::userToUserResponse)
                 .toList();
-    }
-
-    private void validateUpdatePermission(UserResponse authenticatedUser, User targetUser) {
-
-        RoleType authenticatedRole = RoleType.valueOf(authenticatedUser.getUserRole());
-
-        RoleType targetRole = targetUser.getUserRole().getRoleType();
-
-        if (authenticatedRole == RoleType.ADMIN) {
-            return;
-        }
-
-        if (authenticatedRole == RoleType.MANAGER &&
-                (targetRole == RoleType.ASSISTANT_MANAGER ||
-                        targetRole == RoleType.TEACHER ||
-                        targetRole == RoleType.STUDENT)) {
-            return;
-        }
-
-        if (authenticatedRole == RoleType.ASSISTANT_MANAGER &&
-                (targetRole == RoleType.TEACHER ||
-                        targetRole == RoleType.STUDENT)) {
-            return;
-        }
-
-        throw new BadRequestException(ErrorMessageType.NOT_PERMITTED);
-    }
+    }*/
 }

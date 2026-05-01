@@ -139,4 +139,11 @@ public class MethodHelper {
                 new ResourceNotFoundException(ErrorMessageType.LESSON_NOT_FOUND_FIELD,id));
     }
 
+    public int getLastStudentNumber(){
+        if(!userRepository.existsByUserRole_RoleType(RoleType.STUDENT)){
+            return 1000;
+        }
+
+        return userRepository.getMaxStudentNumber()+1;
+    }
 }

@@ -22,7 +22,6 @@ public class DateTimeValidator {
         if (!lp1.getDay().equals(lp2.getDay())) {
             return false;
         }
-
         return lp1.getStartTime().isBefore(lp2.getStopTime()) &&
                 lp1.getStopTime().isAfter(lp2.getStartTime());
     }
@@ -43,22 +42,19 @@ public class DateTimeValidator {
         boolean hasOverlap = requestPrograms.stream()
                 .anyMatch(request -> existingPrograms.stream()
                         .anyMatch(existing -> isOverLapping(existing, request)));
-
         if (hasOverlap) {
             throw new BadRequestException(ErrorMessageType.LESSON_PROGRAM_ALREADY_EXISTS);
         }
     }
 
-    public void checkLessonProgram(Set<LessonProgram> existingPrograms, Set<LessonProgram> requestedPrograms) {
+    public void checkLessonPrograms(Set<LessonProgram> existingPrograms, Set<LessonProgram> requestedPrograms) {
 
         if (requestedPrograms == null || requestedPrograms.isEmpty()) {
             return;
         }
-
         if (requestedPrograms.size() > 1) {
             checkOverlapsWithinRequest(requestedPrograms);
         }
-
         if (existingPrograms != null && !existingPrograms.isEmpty()) {
             checkOverlapsWithExisting(existingPrograms, requestedPrograms);
         }

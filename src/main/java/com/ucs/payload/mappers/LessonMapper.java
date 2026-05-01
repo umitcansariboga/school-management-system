@@ -17,6 +17,6 @@ public interface LessonMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "lessonId", ignore = true)
     @Mapping(target = "lessonPrograms", ignore = true)
-    void updateLessonFromRequest(LessonRequest lessonRequest, @MappingTarget Lesson lesson);
+    Lesson updatedLessonFromRequest(LessonRequest lessonRequest, @MappingTarget Lesson lesson);
 
 }
