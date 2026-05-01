@@ -2,7 +2,9 @@ package com.ucs.service.helper;
 
 import com.ucs.entity.concretes.business.EducationTerm;
 import com.ucs.entity.concretes.business.Lesson;
+import com.ucs.entity.concretes.business.StudentInfo;
 import com.ucs.entity.concretes.user.User;
+import com.ucs.entity.enums.Note;
 import com.ucs.entity.enums.RoleType;
 import com.ucs.exception.BadRequestException;
 import com.ucs.exception.ConflictException;
@@ -12,6 +14,7 @@ import com.ucs.payload.request.business.EducationTermRequest;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.business.EducationTermRepository;
 import com.ucs.repository.business.LessonRepository;
+import com.ucs.repository.business.StudentInfoRepository;
 import com.ucs.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,6 +29,7 @@ public class MethodHelper {
     private final UserRepository userRepository;
     private final EducationTermRepository educationTermRepository;
     private final LessonRepository lessonRepository;
+    private final StudentInfoRepository studentInfoRepository;
 
 
     public User getUserById(Long userId) {
@@ -146,4 +150,32 @@ public class MethodHelper {
 
         return userRepository.getMaxStudentNumber()+1;
     }
+
+    public void checkSameLesson(Long studentId, String lessonName){
+        boolean islessonDuplicateExist=studentInfoRepository.findByStudent_Id(studentId)
+                .stream()
+                .anyMatch(s->s.getLesson().getLessonName().equalsIgnoreCase(lessonName));
+
+        if(islessonDuplicateExist){
+            throw new ConflictException(
+                    ErrorMessageType.LESSON_ALREADY_EXISTS_NAME,lessonName
+            );
+        }
+    }
+
+    public Note checkLetterGrade(Double average) {
+        if (average < 50.00) return Note.FF;
+        if (average < 60.00) return Note.DD;
+        if (average < 65.00) return Note.CC;
+        if (average < 70.00) return Note.CB;
+        if (average < 75.00) return Note.BB;
+        if (average < 80.00) return Note.BA;
+        return Note.AA;
+    }
+
+    public StudentInfo isStudentInfoExistsById(Long id) {
+        return studentInfoRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(ErrorMessageType.STUDENT_INFO_NOT_FOUND, id));
+    }
+
 }
