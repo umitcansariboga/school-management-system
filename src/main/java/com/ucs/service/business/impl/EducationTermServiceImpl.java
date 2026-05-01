@@ -5,6 +5,7 @@ import com.ucs.payload.mappers.EducationTermMapper;
 import com.ucs.payload.request.business.EducationTermRequest;
 import com.ucs.payload.response.business.EducationTermResponse;
 import com.ucs.repository.business.EducationTermRepository;
+import com.ucs.service.business.IEducationTermService;
 import com.ucs.service.helper.MethodHelper;
 import com.ucs.service.helper.PageableHelper;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class EducationTermServiceImpl {
+public class EducationTermServiceImpl implements IEducationTermService {
 
     private final EducationTermRepository educationTermRepository;
     private final EducationTermMapper educationTermMapper;
@@ -35,7 +36,6 @@ public class EducationTermServiceImpl {
 
         return educationTermMapper.toEducationTermResponse(savedEducationTerm);
     }
-
 
     public EducationTermResponse getEducationTermResponseById(Long id) {
 
