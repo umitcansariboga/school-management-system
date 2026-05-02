@@ -1,6 +1,8 @@
 package com.ucs.service.business.impl;
 
+import com.ucs.contactmessage.messages.Messages;
 import com.ucs.entity.concretes.business.EducationTerm;
+import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.mappers.EducationTermMapper;
 import com.ucs.payload.request.business.EducationTermRequest;
 import com.ucs.payload.response.business.EducationTermResponse;
@@ -58,9 +60,11 @@ public class EducationTermServiceImpl implements IEducationTermService {
     }
 
     @Transactional
-    public void deleteEducationTermById(Long id) {
+    public String deleteEducationTermById(Long id) {
         EducationTerm educationTerm = methodHelper.getEducationTermById(id);
         educationTermRepository.delete(educationTerm);
+
+        return Messages.getMessage(SuccessMessageType.EDUCATION_TERM_DELETED.getMessage());
     }
 
     @Transactional

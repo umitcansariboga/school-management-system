@@ -23,7 +23,7 @@ public interface ILessonProgramService {
 
     List<LessonProgramResponse> getAllUnassigned();
 
-    void deleteById(Long id);
+    String deleteById(Long id);
 
     Set<LessonProgramResponse> getAllLessonProgramByUser(UserResponse authenticatedUser);
 

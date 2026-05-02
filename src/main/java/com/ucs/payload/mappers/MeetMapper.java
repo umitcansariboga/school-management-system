@@ -15,20 +15,20 @@ public interface MeetMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "advisoryTeacher", ignore = true)
     @Mapping(target = "studentList", ignore = true)
-    Meet toMeet(MeetRequest meetRequest);
+    Meet requestToMeet(MeetRequest meetRequest);
 
     @Mapping(target = "teacherName", expression = "java(meet.getAdvisoryTeacher().getName() + \" \" + meet.getAdvisoryTeacher().getSurname())")
     @Mapping(target = "ssn", source = "advisoryTeacher.ssn")
     @Mapping(target = "username", source = "advisoryTeacher.username")
     @Mapping(target = "advisorTeacherId", source = "advisoryTeacher.id")
     @Mapping(target = "studentsIds", source = "studentList")
-    MeetResponse toMeetResponse(Meet meet);
+    MeetResponse meetToMeetResponse(Meet meet);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "advisoryTeacher", ignore = true)
     @Mapping(target = "studentList", ignore = true)
-    void updatetoMeetFromRequest(MeetRequest meetRequest, @MappingTarget Meet meet);
+    Meet updatetoMeetFromRequest(MeetRequest meetRequest, @MappingTarget Meet meet);
 
     default List<Long> mapUserListToIds(Set<User> value) {
         if (value == null) return null;
