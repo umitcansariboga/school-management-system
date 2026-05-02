@@ -2,6 +2,7 @@ package com.ucs.service.helper;
 
 import com.ucs.entity.concretes.business.EducationTerm;
 import com.ucs.entity.concretes.business.Lesson;
+import com.ucs.entity.concretes.business.Meet;
 import com.ucs.entity.concretes.business.StudentInfo;
 import com.ucs.entity.concretes.user.User;
 import com.ucs.entity.enums.Note;
@@ -14,12 +15,16 @@ import com.ucs.payload.request.business.EducationTermRequest;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.business.EducationTermRepository;
 import com.ucs.repository.business.LessonRepository;
+import com.ucs.repository.business.MeetRepository;
 import com.ucs.repository.business.StudentInfoRepository;
 import com.ucs.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Component
@@ -30,6 +35,7 @@ public class MethodHelper {
     private final EducationTermRepository educationTermRepository;
     private final LessonRepository lessonRepository;
     private final StudentInfoRepository studentInfoRepository;
+    private final MeetRepository meetRepository;
 
 
     public User getUserById(Long userId) {
@@ -125,40 +131,40 @@ public class MethodHelper {
         }
     }
 
-    public EducationTerm getEducationTermById(Long id){
-        return educationTermRepository.findById(id).orElseThrow(()->
-                new ResourceNotFoundException(ErrorMessageType.EDUCATION_TERM_NOT_FOUND,id));
+    public EducationTerm getEducationTermById(Long id) {
+        return educationTermRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(ErrorMessageType.EDUCATION_TERM_NOT_FOUND, id));
     }
 
-    public void checkLessonExistenceByName(String lessonName){
-        boolean lessonExist=lessonRepository.existsByLessonNameEqualsIgnoreCase(lessonName);
+    public void checkLessonExistenceByName(String lessonName) {
+        boolean lessonExist = lessonRepository.existsByLessonNameEqualsIgnoreCase(lessonName);
 
-        if(lessonExist){
+        if (lessonExist) {
             throw new ConflictException(ErrorMessageType.LESSON_ALREADY_EXISTS_NAME);
         }
     }
 
-    public Lesson getLessonById(Long id){
-        return lessonRepository.findById(id).orElseThrow(()->
-                new ResourceNotFoundException(ErrorMessageType.LESSON_NOT_FOUND_FIELD,id));
+    public Lesson getLessonById(Long id) {
+        return lessonRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(ErrorMessageType.LESSON_NOT_FOUND_FIELD, id));
     }
 
-    public int getLastStudentNumber(){
-        if(!userRepository.existsByUserRole_RoleType(RoleType.STUDENT)){
+    public int getLastStudentNumber() {
+        if (!userRepository.existsByUserRole_RoleType(RoleType.STUDENT)) {
             return 1000;
         }
 
-        return userRepository.getMaxStudentNumber()+1;
+        return userRepository.getMaxStudentNumber() + 1;
     }
 
-    public void checkSameLesson(Long studentId, String lessonName){
-        boolean islessonDuplicateExist=studentInfoRepository.findByStudent_Id(studentId)
+    public void checkSameLesson(Long studentId, String lessonName) {
+        boolean islessonDuplicateExist = studentInfoRepository.findByStudent_Id(studentId)
                 .stream()
-                .anyMatch(s->s.getLesson().getLessonName().equalsIgnoreCase(lessonName));
+                .anyMatch(s -> s.getLesson().getLessonName().equalsIgnoreCase(lessonName));
 
-        if(islessonDuplicateExist){
+        if (islessonDuplicateExist) {
             throw new ConflictException(
-                    ErrorMessageType.LESSON_ALREADY_EXISTS_NAME,lessonName
+                    ErrorMessageType.LESSON_ALREADY_EXISTS_NAME, lessonName
             );
         }
     }
@@ -176,6 +182,51 @@ public class MethodHelper {
     public StudentInfo isStudentInfoExistsById(Long id) {
         return studentInfoRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(ErrorMessageType.STUDENT_INFO_NOT_FOUND, id));
+    }
+
+    public Meet isMeetExistById(Long meetId) {
+        return meetRepository.findById(meetId).orElseThrow(() ->
+                new ResourceNotFoundException(ErrorMessageType.MEET_NOT_FOUND, meetId));
+    }
+
+    public void isTeacherControl(Meet meet, String username) {
+        User teacher = getUserByUsername(username);
+        boolean isTeacher = teacher.getUserRole().getRoleType().equals(RoleType.TEACHER);
+        boolean isOwner = meet.getAdvisoryTeacher().getId().equals(teacher.getId());
+
+        if (isTeacher && !isOwner) {
+            throw new BadRequestException(ErrorMessageType.NOT_PERMITTED);
+        }
+    }
+
+    public void checkMeetConflict(Long userId, LocalDate date, LocalTime startTime, LocalTime stopTime) {
+
+        User user = getUserByUserId(userId);
+        List<Meet> meets;
+
+        if (Boolean.TRUE.equals(user.getIsAdvisor())) {
+            meets = meetRepository.findByAdvisoryTeacher_Id(userId);
+        } else {
+            meets = meetRepository.findByStudentList_Id(userId);
+        }
+
+        for (Meet meet : meets) {
+            LocalTime existingStartTime = meet.getStartTime();
+            LocalTime existingStopTime = meet.getStopTime();
+
+            if (meet.getDate().equals(date)) {
+
+                boolean isConflict =
+                        (startTime.isAfter(existingStartTime) && startTime.isBefore(existingStopTime)) ||
+                                stopTime.isAfter(existingStartTime) && stopTime.isBefore(existingStopTime) ||
+                                startTime.isBefore(existingStartTime) && stopTime.isAfter(existingStopTime) ||
+                                startTime.equals(existingStartTime) || stopTime.equals(existingStopTime);
+
+                if (isConflict) {
+                    throw new ConflictException(ErrorMessageType.MEET_HOURS_CONFLICT);
+                }
+            }
+        }
     }
 
 }

@@ -1,9 +1,11 @@
 package com.ucs.service.business.impl;
 
+import com.ucs.contactmessage.messages.Messages;
 import com.ucs.entity.concretes.business.Lesson;
 import com.ucs.exception.ConflictException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.exception.ResourceNotFoundException;
+import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.mappers.LessonMapper;
 import com.ucs.payload.request.business.LessonRequest;
 import com.ucs.payload.response.business.LessonResponse;
@@ -38,9 +40,11 @@ public class LessonServiceImpl implements ILessonService {
     }
 
     @Transactional
-    public void deleteLesson(Long id) {
+    public String deleteLesson(Long id) {
         Lesson foundLesson = methodHelper.getLessonById(id);
         lessonRepository.delete(foundLesson);
+
+        return Messages.getMessage(SuccessMessageType.LESSON_DELETED.getMessage());
     }
 
     public LessonResponse getLessonByLessonName(String lessonName) {

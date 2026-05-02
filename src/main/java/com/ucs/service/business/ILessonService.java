@@ -10,7 +10,7 @@ import java.util.Set;
 public interface ILessonService {
 
     LessonResponse saveLesson(LessonRequest lessonRequest);
-    void deleteLesson(Long id);
+    String deleteLesson(Long id);
     LessonResponse getLessonByLessonName(String lessonName);
     Page<LessonResponse> findLessonByPage(int page, int size, String sort, String type);
     Set<Lesson> getLessonByLessonIdSet(Set<Long> idSet);

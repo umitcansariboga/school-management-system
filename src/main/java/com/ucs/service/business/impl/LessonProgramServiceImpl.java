@@ -1,11 +1,13 @@
 package com.ucs.service.business.impl;
 
+import com.ucs.contactmessage.messages.Messages;
 import com.ucs.entity.concretes.business.EducationTerm;
 import com.ucs.entity.concretes.business.Lesson;
 import com.ucs.entity.concretes.business.LessonProgram;
 import com.ucs.exception.BadRequestException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.exception.ResourceNotFoundException;
+import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.mappers.LessonProgramMapper;
 import com.ucs.payload.request.business.LessonProgramRequest;
 import com.ucs.payload.response.business.LessonProgramResponse;
@@ -17,6 +19,7 @@ import com.ucs.service.business.ILessonProgramService;
 import com.ucs.service.helper.MethodHelper;
 import com.ucs.service.helper.PageableHelper;
 import com.ucs.service.validator.DateTimeValidator;
+import io.jsonwebtoken.security.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -93,9 +96,11 @@ public class LessonProgramServiceImpl implements ILessonProgramService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
+    public String deleteById(Long id) {
         LessonProgram lessonProgram = getLessonProgramEntityById(id);
         lessonProgramRepository.delete(lessonProgram);
+
+        return Messages.getMessage(SuccessMessageType.LESSON_PROGRAM_DELETED.getMessage());
     }
 
     public Set<LessonProgramResponse> getAllLessonProgramByUser(UserResponse authenticatedUser) {

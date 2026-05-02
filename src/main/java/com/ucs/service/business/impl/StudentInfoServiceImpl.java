@@ -1,11 +1,13 @@
 package com.ucs.service.business.impl;
 
+import com.ucs.contactmessage.messages.Messages;
 import com.ucs.entity.concretes.business.EducationTerm;
 import com.ucs.entity.concretes.business.Lesson;
 import com.ucs.entity.concretes.business.StudentInfo;
 import com.ucs.entity.concretes.user.User;
 import com.ucs.entity.enums.Note;
 import com.ucs.entity.enums.RoleType;
+import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.mappers.StudentInfoMapper;
 import com.ucs.payload.request.business.StudentInfoRequest;
 import com.ucs.payload.request.business.UpdateStudentInfoRequest;
@@ -14,17 +16,20 @@ import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.business.StudentInfoRepository;
 import com.ucs.service.business.IEducationTermService;
 import com.ucs.service.business.ILessonService;
+import com.ucs.service.business.IStudentInfoService;
 import com.ucs.service.helper.MethodHelper;
 import com.ucs.service.helper.PageableHelper;
 import com.ucs.service.user.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class StudentInfoServiceImpl {
+public class StudentInfoServiceImpl implements IStudentInfoService {
 
     private final StudentInfoRepository studentInfoRepository;
     private final MethodHelper methodHelper;
@@ -82,9 +87,11 @@ public class StudentInfoServiceImpl {
     }
 
     @Transactional
-    public void deleteById(Long studentInfoId) {
+    public String deleteById(Long studentInfoId) {
         methodHelper.isStudentInfoExistsById(studentInfoId);
         studentInfoRepository.deleteById(studentInfoId);
+
+        return Messages.getMessage(SuccessMessageType.STUDENT_INFO_DELETED.getMessage());
     }
 
     @Transactional
@@ -112,5 +119,23 @@ public class StudentInfoServiceImpl {
         return studentInfoMapper.toStudentInfoResponse(updatedStudentInfo);
     }
 
+    public Page<StudentInfoResponse> getAllForTeacher(UserResponse authenticatedUser,
+                                                      int page,
+                                                      int size) {
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
+        String username = authenticatedUser.getUsername();
 
+        return studentInfoRepository.findByTeacher_Username(username, pageable)
+                .map(studentInfoMapper::toStudentInfoResponse);
+    }
+
+    public Page<StudentInfoResponse> getAllForStudent(UserResponse authenticatedUser,
+                                                      int page,
+                                                      int size) {
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
+        String username = authenticatedUser.getUsername();
+
+        return studentInfoRepository.findByStudent_Username(username, pageable)
+                .map(studentInfoMapper::toStudentInfoResponse);
+    }
 }

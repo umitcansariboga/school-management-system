@@ -12,6 +12,6 @@ public interface IEducationTermService {
     EducationTermResponse getEducationTermResponseById(Long id);
     List<EducationTermResponse> getAllEducationTerms();
     Page<EducationTermResponse> getAllEducationTermsByPage(int page, int size, String sort, String type);
-    void deleteEducationTermById(Long id);
+    String deleteEducationTermById(Long id);
     EducationTermResponse updateEducationTerm(Long id, EducationTermRequest request);
 }
