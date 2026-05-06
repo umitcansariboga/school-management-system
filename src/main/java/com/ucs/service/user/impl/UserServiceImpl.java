@@ -138,7 +138,7 @@ public class UserServiceImpl implements IUserService {
         updateBaseFields(targetUser, userRequest);
         Optional.ofNullable(userRequest.getUsername()).ifPresent(targetUser::setUsername);
         Optional.ofNullable(userRequest.getSsn()).ifPresent(targetUser::setSsn);
-        Optional.ofNullable(userRequest.getIsActive()).ifPresent(targetUser::setIsActive);
+        Optional.ofNullable(userRequest.getIsActive()).ifPresent(targetUser::setActive);
         Optional.ofNullable(userRequest.getIsAdvisor()).ifPresent(targetUser::setIsAdvisor);
 
         return userMapper.userToUserResponse(userRepository.save(targetUser));
@@ -150,7 +150,7 @@ public class UserServiceImpl implements IUserService {
         User targetUser = methodHelper.getUserById(userId);
         validateUpdatePermission(authenticatedUser, targetUser);
         updateBaseFields(targetUser, userRequest);
-        Optional.ofNullable(userRequest.getIsActive()).ifPresent(targetUser::setIsActive);
+        Optional.ofNullable(userRequest.getIsActive()).ifPresent(targetUser::setActive);
         return userMapper.userToUserResponse(userRepository.save(targetUser));
     }
 
@@ -199,14 +199,18 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Transactional
-    public void updatePassword(UpdatePasswordRequest request, UserResponse authenticatedUser) {
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest, UserResponse authenticatedUser) {
         User user = methodHelper.getUserByUsername(authenticatedUser.getUsername());
 
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new BadRequestException(ErrorMessageType.PASSWORDS_DO_NOT_MATCH);
         }
 
-        String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
+        if(passwordEncoder.matches(updatePasswordRequest.getNewPassword(),user.getPassword())) {
+            throw new BadRequestException(ErrorMessageType.PASSWORDS_IS_OLD);
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
         user.setPassword(encodedNewPassword);
 
         userRepository.save(user);

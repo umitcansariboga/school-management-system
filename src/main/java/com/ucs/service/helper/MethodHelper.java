@@ -18,7 +18,9 @@ import com.ucs.repository.business.LessonRepository;
 import com.ucs.repository.business.MeetRepository;
 import com.ucs.repository.business.StudentInfoRepository;
 import com.ucs.repository.user.UserRepository;
+import com.ucs.security.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
@@ -62,7 +64,7 @@ public class MethodHelper {
 
     public void checkRole(User user, RoleType roleType) {
         if (user.getUserRole() == null || !user.getUserRole().getRoleType().equals(roleType)) {
-            throw new ResourceNotFoundException(ErrorMessageType.USER_DOES_NOT_HAVE_ROLE, user.getId(), roleType);
+            throw new ResourceNotFoundException(ErrorMessageType.USER_ROLE_MISMATCH, user.getId(), roleType);
         }
     }
 
@@ -227,6 +229,14 @@ public class MethodHelper {
                 }
             }
         }
+    }
+
+    public UserDetailsImpl getAuthenticatedUserDetails(){
+        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal instanceof UserDetailsImpl){
+            return (UserDetailsImpl) principal;
+        }
+        return null;
     }
 
 }

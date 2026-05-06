@@ -49,8 +49,6 @@ public class User {
 
     private Integer studentNumber;
 
-    private Boolean isActive;
-
     private Long advisorTeacherId;
 
     private Boolean isAdvisor;
@@ -74,4 +72,8 @@ public class User {
 
     @ManyToMany(mappedBy = "studentList")
     private Set<Meet> meetList;
+
+    private boolean isActive = true;
+    private Boolean isLocked = false;
+    private LocalDate lastPasswordChange = LocalDate.now();
 }
