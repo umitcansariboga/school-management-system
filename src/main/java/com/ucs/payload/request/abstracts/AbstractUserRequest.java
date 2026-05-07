@@ -46,7 +46,7 @@ public abstract class AbstractUserRequest {
 
     @NotNull(message = "Please enter your phone number")
     @Size(min = 2, max = 12, message = "Your phone number should be at least 2 chars")
-    @Pattern(regexp = "^((\\\\(\\\\d{3}\\\\))|\\\\d{3})[- .]?\\\\d{3}[- .]?\\\\d{4}$",
+    @Pattern(regexp = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$",
             message = "Please enter valid phone number")  //555-444-3322
     private String phoneNumber;
 

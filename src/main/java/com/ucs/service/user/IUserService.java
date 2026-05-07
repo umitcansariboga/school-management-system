@@ -23,11 +23,11 @@ public interface IUserService {
     //BaseUserResponse updateUserForUsers(UserRequestWithoutPassword userRequest, UserResponse authenticatedUser);
 
     //void updateBaseFields(UserBaseUpdateRequest userRequest, Long userId, UserResponse authenticatedUser);
-    BaseUserResponse updateUserByAdmin(UserUpdateByAdminRequest userRequest, Long userId, UserResponse authenticatedUser);
+    BaseUserResponse updateUserByAdmin(UserUpdateByAdminRequest userRequest, Long userId);
 
-    BaseUserResponse updateUserByManager(UserUpdateByManagerRequest userRequest, Long userId, UserResponse authenticatedUser);
+    BaseUserResponse updateUserByManager(UserUpdateByManagerRequest userRequest, Long userId);
 
-    BaseUserResponse updateUserByAssistant(UserUpdateByAssistantRequest userRequest, Long userId, UserResponse authenticatedUser);
+    BaseUserResponse updateUserByAssistant(UserUpdateByAssistantRequest userRequest, Long userId);
 
-    void updatePassword(UpdatePasswordRequest request, UserResponse authenticatedUser);
+    void updatePassword(UpdatePasswordRequest request);
 }

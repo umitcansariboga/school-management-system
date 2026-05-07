@@ -16,6 +16,7 @@ import com.ucs.payload.request.user.UserRequest;
 import com.ucs.payload.response.abstracts.BaseUserResponse;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.user.UserRepository;
+import com.ucs.security.service.UserDetailsImpl;
 import com.ucs.service.helper.MethodHelper;
 import com.ucs.service.helper.PageableHelper;
 import com.ucs.service.helper.UserRoleHelper;
@@ -91,18 +92,6 @@ public class UserServiceImpl implements IUserService {
         return response;
     }
 
-
-    /* CONTROLLER KATMANINA AKTARILACAK
-    * @DeleteMapping("/{id}")
-     public ResponseEntity<ResponseMessage<String>> deleteUser(
-        @PathVariable Long id, Authentication authentication
-        * @AuthenticationPrincipal UserResponse userPrincipal ------alternatif // Direkt cast edilmiş halde gelir!) {
-
-    // Authentication nesnesinden asıl kullanıcı detaylarını (Principal) alıyoruz
-    UserResponse userPrincipal = (UserResponse) authentication.getPrincipal();
-
-    return ResponseEntity.ok(userService.deleteUserById(id, userPrincipal));
-}*/
     @Transactional
     public String deleteUserById(Long userId, UserResponse authenticatedUser) {
         User targetUser = methodHelper.getUserById(userId);
@@ -131,7 +120,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public BaseUserResponse updateUserByAdmin(UserUpdateByAdminRequest userRequest, Long userId, UserResponse authenticatedUser) {
+    public BaseUserResponse updateUserByAdmin(UserUpdateByAdminRequest userRequest, Long userId) {
+        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
         User targetUser = methodHelper.getUserById(userId);
         validateUpdatePermission(authenticatedUser, targetUser);
 
@@ -146,7 +136,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public BaseUserResponse updateUserByManager(UserUpdateByManagerRequest userRequest, Long userId, UserResponse authenticatedUser) {
+    public BaseUserResponse updateUserByManager(UserUpdateByManagerRequest userRequest, Long userId) {
+        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
         User targetUser = methodHelper.getUserById(userId);
         validateUpdatePermission(authenticatedUser, targetUser);
         updateBaseFields(targetUser, userRequest);
@@ -156,7 +147,8 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public BaseUserResponse updateUserByAssistant(UserUpdateByAssistantRequest userRequest, Long userId, UserResponse authenticatedUser) {
+    public BaseUserResponse updateUserByAssistant(UserUpdateByAssistantRequest userRequest, Long userId) {
+        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
         User targetUser = methodHelper.getUserById(userId);
         validateUpdatePermission(authenticatedUser, targetUser);
         updateBaseFields(targetUser, userRequest);
@@ -172,9 +164,10 @@ public class UserServiceImpl implements IUserService {
         Optional.ofNullable(userRequest.getGender()).ifPresent(user::setGender);
     }
 
-    private void validateUpdatePermission(UserResponse authenticatedUser, User targetUser) {
+    private void validateUpdatePermission(UserDetailsImpl authenticatedUser, User targetUser) {
 
-        RoleType authenticatedRole = RoleType.valueOf(authenticatedUser.getUserRole());
+        String roleName=authenticatedUser.getAuthorities().iterator().next().getAuthority();
+        RoleType authenticatedRole=RoleType.valueOf(roleName);
 
         RoleType targetRole = targetUser.getUserRole().getRoleType();
 
@@ -199,14 +192,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Transactional
-    public void updatePassword(UpdatePasswordRequest updatePasswordRequest, UserResponse authenticatedUser) {
+    public void updatePassword(UpdatePasswordRequest updatePasswordRequest) {
+        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
         User user = methodHelper.getUserByUsername(authenticatedUser.getUsername());
 
         if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
             throw new BadRequestException(ErrorMessageType.PASSWORDS_DO_NOT_MATCH);
         }
 
-        if(passwordEncoder.matches(updatePasswordRequest.getNewPassword(),user.getPassword())) {
+        if (passwordEncoder.matches(updatePasswordRequest.getNewPassword(), user.getPassword())) {
             throw new BadRequestException(ErrorMessageType.PASSWORDS_IS_OLD);
         }
 
@@ -215,75 +209,4 @@ public class UserServiceImpl implements IUserService {
 
         userRepository.save(user);
     }
-
-   /* public BaseUserResponse updateUser(
-            UserRequest userRequest, Long userId, UserResponse authenticatedUser) {
-
-        User targetUser = methodHelper.getUserById(userId);
-
-        validateUpdatePermission(authenticatedUser, targetUser);
-
-        uniquePropertyValidator.checkUniqueProperties(targetUser, userRequest);
-        User updatedUser = userMapper.updateToUserFromRequest(userRequest, targetUser);
-
-        updatedUser.setBuiltIn(targetUser.getBuiltIn());
-        updatedUser.setUserRole(targetUser.getUserRole());
-        updatedUser.setIsAdvisor(targetUser.getIsAdvisor());
-        updatedUser.setAdvisorTeacherId(targetUser.getAdvisorTeacherId());
-
-        updatedUser.setStudentNumber(targetUser.getStudentNumber());
-        updatedUser.setMotherName(targetUser.getMotherName());
-        updatedUser.setFatherName(targetUser.getFatherName());
-        updatedUser.setIsActive(targetUser.getIsActive());
-
-        updatedUser.setLessonProgramSet(targetUser.getLessonProgramSet());
-        updatedUser.setMeetList(targetUser.getMeetList());
-        updatedUser.setStudentInfos(targetUser.getStudentInfos());
-
-        if (userRequest.getPassword() != null && !userRequest.getPassword().trim().isEmpty()) {
-            updatedUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        } else {
-            updatedUser.setPassword(targetUser.getPassword());
-        }
-
-        User savedUser = userRepository.save(updatedUser);
-
-        BaseUserResponse response;
-        switch (savedUser.getUserRole().getRoleType()) {
-            case STUDENT -> response = userMapper.userToStudentResponse(savedUser);
-            case TEACHER -> response = userMapper.userToTeacherResponse(savedUser);
-            default -> response = userMapper.userToUserResponse(savedUser);
-        }
-        return response;
-    }
-
-    public BaseUserResponse updateUserForUsers(UserRequestWithoutPassword userRequest, UserResponse authenticatedUser) {
-
-        String username = authenticatedUser.getUsername();
-
-        User user = methodHelper.getUserByUsername(username);
-        methodHelper.checkBuildIn(user);
-        uniquePropertyValidator.checkUniqueProperties(user, userRequest);
-
-        user.setUsername(userRequest.getUsername());
-        user.setBirthDay(userRequest.getBirthDay());
-        user.setEmail(userRequest.getEmail());
-        user.setPhoneNumber(userRequest.getPhoneNumber());
-        user.setBirthPlace(userRequest.getBirthPlace());
-        user.setGender(userRequest.getGender());
-        user.setName(userRequest.getName());
-        user.setSurname(userRequest.getSurname());
-        userRequest.setSsn(userRequest.getSsn());
-
-        User updatedUser = userRepository.save(user);
-
-        return userMapper.userToUserResponse(updatedUser);
-    }
-
-    public List<UserResponse> getUserByName(String name) {
-        return userRepository.findByNameContaining(name)
-                .stream()
-                .map(userMapper::userToUserResponse)
-                .toList();
-    }*/
 }
