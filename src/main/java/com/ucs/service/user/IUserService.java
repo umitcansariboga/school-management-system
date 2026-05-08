@@ -1,11 +1,10 @@
 package com.ucs.service.user;
 
-import com.ucs.payload.request.UpdatePasswordRequest;
-import com.ucs.payload.request.updateRequest.UserBaseUpdateRequest;
 import com.ucs.payload.request.updateRequest.UserUpdateByAdminRequest;
 import com.ucs.payload.request.updateRequest.UserUpdateByAssistantRequest;
 import com.ucs.payload.request.updateRequest.UserUpdateByManagerRequest;
 import com.ucs.payload.request.user.UserRequest;
+import com.ucs.payload.request.user.UserRequestWithoutPassword;
 import com.ucs.payload.response.abstracts.BaseUserResponse;
 import com.ucs.payload.response.user.UserResponse;
 import org.springframework.data.domain.Page;
@@ -18,16 +17,15 @@ public interface IUserService {
 
     BaseUserResponse getUserById(Long userId);
 
-    String deleteUserById(Long userId, UserResponse authenticatedUser);
-    //BaseUserResponse updateUser(UserRequest userRequest, Long userId, UserResponse authenticatedUser);
-    //BaseUserResponse updateUserForUsers(UserRequestWithoutPassword userRequest, UserResponse authenticatedUser);
+    String deleteUserById(Long userId);
 
-    //void updateBaseFields(UserBaseUpdateRequest userRequest, Long userId, UserResponse authenticatedUser);
     BaseUserResponse updateUserByAdmin(UserUpdateByAdminRequest userRequest, Long userId);
 
     BaseUserResponse updateUserByManager(UserUpdateByManagerRequest userRequest, Long userId);
 
     BaseUserResponse updateUserByAssistant(UserUpdateByAssistantRequest userRequest, Long userId);
 
-    void updatePassword(UpdatePasswordRequest request);
+    BaseUserResponse updateUserForUsers(UserRequestWithoutPassword userRequest);
+
+    Page<UserResponse> getUserByName(int page, int size, String name);
 }

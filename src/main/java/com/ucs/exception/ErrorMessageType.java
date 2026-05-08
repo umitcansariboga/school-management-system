@@ -41,7 +41,7 @@ public enum ErrorMessageType {
     WRONG_DATE_FORMAT("400", "contact.error.date.format"),
     ONLY_ONE_ADMIN("400","user.only.one.admin"),
     ONLY_ONE_MANAGER("400","user.only.one.manager"),
-    PASSWORDS_IS_OLD("400","error.password.is.old") ,
+    PASSWORD_IS_OLD("400","error.password.is.old") ,
 
     // --- 403 FORBIDDEN ---
     NOT_PERMITTED("403", "error.not.permitted"),

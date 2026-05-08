@@ -143,7 +143,7 @@ public class MeetServiceImpl implements IMeetService {
         User user = methodHelper.getUserByUsername(authenticatedUser.getUsername());
         methodHelper.checkAdvisor(user);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
-        return meetRepository.findAllMeetByAdvisorTeacherId(user.getId(), pageable)
+        return meetRepository.findAllMeetByAdvisoryTeacher_Id(user.getId(), pageable)
                 .map(meetMapper::meetToMeetResponse);
     }
 

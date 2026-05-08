@@ -12,9 +12,9 @@ import java.util.List;
 public interface ITeacherService {
     TeacherResponse saveTeacher(TeacherRequest teacherRequest);
 
-    List<StudentResponse> getAllStudentByAdvisorUserName(UserResponse authenticatedUser);
+    List<StudentResponse> getAllStudentByAdvisorUserName();
 
-    TeacherResponse updateTeacherForManagers(TeacherUpdateByAdminRequest teacherRequest, Long userId, UserResponse authenticatedUser);
+    TeacherResponse updateTeacherForManagers(TeacherUpdateByAdminRequest teacherRequest, Long userId);
 
     TeacherResponse saveAdvisorTeacher(Long teacherId);
 
