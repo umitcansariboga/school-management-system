@@ -4,6 +4,7 @@ import com.ucs.entity.concretes.user.User;
 import com.ucs.exception.ConflictException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.payload.request.abstracts.AbstractUserRequest;
+import com.ucs.payload.request.updateRequest.UserBaseUpdateRequest;
 import com.ucs.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,40 @@ public class UniquePropertyValidator {
     }
 
     public void checkUniqueProperties(User user, AbstractUserRequest request) {
+
+        String upsatedUsername = null;
+        String updatedSnn = null;
+        String updatedPhone = null;
+        String updateEmail = null;
+
+        boolean isChanged = false;
+
+        if (!user.getUsername().equalsIgnoreCase(request.getUsername())) {
+            upsatedUsername = request.getUsername();
+            isChanged = true;
+        }
+
+        if (!user.getSsn().equalsIgnoreCase(request.getSsn())) {
+            updatedSnn = request.getSsn();
+            isChanged = true;
+        }
+
+        if (!user.getPhoneNumber().equalsIgnoreCase(request.getPhoneNumber())) {
+            updatedPhone = request.getPhoneNumber();
+            isChanged = true;
+        }
+
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail())) {
+            updateEmail = request.getEmail();
+            isChanged = true;
+        }
+
+        if (isChanged) {
+            checkDuplicate(upsatedUsername, updatedSnn, updatedPhone, updateEmail);
+        }
+    }
+
+    public void checkUniqueProperties(User user, UserBaseUpdateRequest request) {
 
         String upsatedUsername = null;
         String updatedSnn = null;

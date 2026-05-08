@@ -22,6 +22,7 @@ public enum SuccessMessageType {
     ADVISOR_TEACHER_DELETED("200", "success.advisor.teacher.deleted"),
     STUDENT_SAVED("201", "success.student.saved"),
     STUDENT_UPDATED("200", "success.student.updated"),
+    STUDENT_STATUS_CHANGED("200", "success.student.status.changed"),
 
     // --- Education & Lesson ---
     EDUCATION_TERM_SAVED("201", "success.education.term.saved"),

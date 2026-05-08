@@ -4,7 +4,7 @@ import com.ucs.entity.enums.Gender;
 import com.ucs.payload.request.abstracts.AbstractUserRequest;
 import jakarta.validation.constraints.*;
 
-public class StudentUpdateByAdminRequest extends AbstractUserRequest {
+public class StudentUpdateByManagersRequest extends AbstractUserRequest {
 
     @Size(min = 2, max = 30)
     private String name;

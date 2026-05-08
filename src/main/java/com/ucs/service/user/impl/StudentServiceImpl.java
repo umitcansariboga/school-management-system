@@ -6,12 +6,12 @@ import com.ucs.entity.enums.RoleType;
 import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.mappers.UserMapper;
 import com.ucs.payload.request.business.ChooseLessonProgramWithId;
-import com.ucs.payload.request.updateRequest.StudentUpdateByAdminRequest;
+import com.ucs.payload.request.updateRequest.StudentUpdateByManagersRequest;
 import com.ucs.payload.request.updateRequest.StudentUpdateRequest;
 import com.ucs.payload.request.user.StudentRequest;
 import com.ucs.payload.response.user.StudentResponse;
-import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.user.UserRepository;
+import com.ucs.security.service.UserDetailsImpl;
 import com.ucs.service.business.ILessonProgramService;
 import com.ucs.service.helper.MethodHelper;
 import com.ucs.service.user.IStudentService;
@@ -40,7 +40,10 @@ public class StudentServiceImpl implements IStudentService {
     private final DateTimeValidator dateTimeValidator;
 
     @Transactional
-    public StudentResponse saveStudent(StudentRequest studentRequest, UserResponse authenticatedUser) {
+    public StudentResponse saveStudent(StudentRequest studentRequest) {
+
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
+
         User advisorTeacher = methodHelper.getUserById(studentRequest.getAdvisorTeacherId());
         methodHelper.checkAdvisor(advisorTeacher);
 
@@ -55,7 +58,7 @@ public class StudentServiceImpl implements IStudentService {
         student.setAdvisorTeacherId(advisorTeacher.getId());
         student.setPassword(passwordEncoder.encode(student.getPassword()));
         student.setUserRole(userRoleService.getUserRole(RoleType.STUDENT));
-        student.setIsActive(true);
+        student.setActive(true);
         student.setIsAdvisor(Boolean.FALSE);
         student.setStudentNumber(methodHelper.getLastStudentNumber());
 
@@ -67,22 +70,21 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Transactional
-    public String changeStatusOfStudent(Long studentId, Boolean status) {
+    public void changeStatusOfStudent(Long studentId, Boolean status) {
 
         User user = methodHelper.getUserById(studentId);
         methodHelper.checkRole(user, RoleType.STUDENT);
-        user.setIsActive(status);
+        user.setActive(status);
 
         userRepository.save(user);
-
-        return "Student is " + (status ? "active" : "passive");
     }
 
     @Transactional
-    public String updateStudent(StudentUpdateRequest studentRequest, UserResponse authenticatedUser) {
+    public String updateStudent(StudentUpdateRequest studentRequest) {
 
-        String username = authenticatedUser.getUsername();
-        User student = methodHelper.getUserByUsername(username);
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
+
+        User student = methodHelper.getUserByUsername(authenticatedUser.getUsername());
         uniquePropertyValidator.checkUniqueProperties(student, studentRequest);
 
         userMapper.updateToStudentUserFromRequest(studentRequest, student);
@@ -93,9 +95,9 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Transactional
-    public StudentResponse updateStudentForManager(Long userId,
-                                                   StudentUpdateByAdminRequest studentRequest,
-                                                   UserResponse authenticatedUser) {
+    public StudentResponse updateStudentForManagers(Long userId,
+                                                   StudentUpdateByManagersRequest studentRequest) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User user = methodHelper.getUserById(userId);
         methodHelper.checkRole(user, RoleType.STUDENT);
 
@@ -110,8 +112,9 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Transactional
-    public StudentResponse addLessonProgramToStudent(ChooseLessonProgramWithId chooseLessonProgramWithId, String username) {
-        User student = methodHelper.getUserByUsername(username);
+    public StudentResponse addLessonProgramToStudent(ChooseLessonProgramWithId chooseLessonProgramWithId) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
+        User student = methodHelper.getUserByUsername(authenticatedUser.getUsername());
         Set<LessonProgram> lessonProgramSet = lessonProgramService.getLessonProgramByIdSet(chooseLessonProgramWithId.getLessonProgramId());
         Set<LessonProgram> studentCurrentLessonProgram = student.getLessonProgramSet();
 

@@ -12,6 +12,7 @@ import com.ucs.payload.response.user.StudentResponse;
 import com.ucs.payload.response.user.TeacherResponse;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.user.UserRepository;
+import com.ucs.security.service.UserDetailsImpl;
 import com.ucs.service.business.ILessonProgramService;
 import com.ucs.service.helper.MethodHelper;
 import com.ucs.service.helper.PageableHelper;
@@ -66,7 +67,9 @@ public class TeacherServiceImpl implements ITeacherService {
         return userMapper.userToTeacherResponse(savedTeacher);
     }
 
-    public List<StudentResponse> getAllStudentByAdvisorUserName(UserResponse authenticatedUser) {
+    public List<StudentResponse> getAllStudentByAdvisorUserName() {
+
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User teacher = methodHelper.getUserByUsername(authenticatedUser.getUsername());
 
         methodHelper.checkAdvisor(teacher);
@@ -78,8 +81,9 @@ public class TeacherServiceImpl implements ITeacherService {
     }
 
     @Transactional
-    public TeacherResponse updateTeacherForManagers(TeacherUpdateByAdminRequest teacherRequest, Long userId, UserResponse authenticatedUser) {
+    public TeacherResponse updateTeacherForManagers(TeacherUpdateByAdminRequest teacherRequest, Long userId) {
 
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User user = methodHelper.getUserById(userId);
         methodHelper.checkRole(user, RoleType.TEACHER);
         Set<LessonProgram> lessonPrograms = lessonProgramService.getLessonProgramByIdSet(teacherRequest.getLessonsIdList());

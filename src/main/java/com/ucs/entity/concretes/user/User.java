@@ -63,11 +63,9 @@ public class User {
     private List<StudentInfo> studentInfos;
 
     @ManyToMany
-    @JoinTable(
-            name = "user_lesson_program",
+    @JoinTable(name = "user_lesson_program",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "lesson_program_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "lesson_program_id"))
     private Set<LessonProgram> lessonProgramSet;
 
     @ManyToMany(mappedBy = "studentList")

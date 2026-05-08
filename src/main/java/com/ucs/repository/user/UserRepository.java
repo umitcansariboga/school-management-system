@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findByUserRole_RoleName(String roleName, Pageable pageable);
 
-    List<User> findByNameContaining(String name);
+    Page<User> findByNameContaining(String name, Pageable pageable);
 
     long countByUserRole_RoleType(RoleType roleType);
 

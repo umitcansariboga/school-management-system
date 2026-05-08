@@ -7,12 +7,12 @@ import com.ucs.exception.BadRequestException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.mappers.UserMapper;
-import com.ucs.payload.request.UpdatePasswordRequest;
 import com.ucs.payload.request.updateRequest.UserBaseUpdateRequest;
 import com.ucs.payload.request.updateRequest.UserUpdateByAdminRequest;
 import com.ucs.payload.request.updateRequest.UserUpdateByAssistantRequest;
 import com.ucs.payload.request.updateRequest.UserUpdateByManagerRequest;
 import com.ucs.payload.request.user.UserRequest;
+import com.ucs.payload.request.user.UserRequestWithoutPassword;
 import com.ucs.payload.response.abstracts.BaseUserResponse;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.user.UserRepository;
@@ -29,12 +29,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
-
     private final UserRepository userRepository;
     private final UniquePropertyValidator uniquePropertyValidator;
     private final UserMapper userMapper;
@@ -92,13 +92,22 @@ public class UserServiceImpl implements IUserService {
         return response;
     }
 
+    public Page<UserResponse> getUserByName(int page, int size, String name) {
+
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
+        return userRepository.findByNameContaining(name, pageable)
+                .map(userMapper::userToUserResponse);
+    }
+
     @Transactional
-    public String deleteUserById(Long userId, UserResponse authenticatedUser) {
+    public String deleteUserById(Long userId) {
+
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User targetUser = methodHelper.getUserById(userId);
 
         methodHelper.checkBuildIn(targetUser);
 
-        RoleType authenticatedRole = RoleType.valueOf(authenticatedUser.getUserRole());
+        RoleType authenticatedRole = RoleType.valueOf(authenticatedUser.getUserRole().getRoleName());
         RoleType targetRole = targetUser.getUserRole().getRoleType();
 
         if (authenticatedRole == RoleType.ADMIN ||
@@ -121,8 +130,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public BaseUserResponse updateUserByAdmin(UserUpdateByAdminRequest userRequest, Long userId) {
-        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User targetUser = methodHelper.getUserById(userId);
+
+        methodHelper.checkBuildIn(targetUser);
+        uniquePropertyValidator.checkUniqueProperties(targetUser, userRequest);
         validateUpdatePermission(authenticatedUser, targetUser);
 
         updateBaseFields(targetUser, userRequest);
@@ -137,8 +149,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public BaseUserResponse updateUserByManager(UserUpdateByManagerRequest userRequest, Long userId) {
-        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User targetUser = methodHelper.getUserById(userId);
+        methodHelper.checkBuildIn(targetUser);
+        uniquePropertyValidator.checkUniqueProperties(targetUser, userRequest);
         validateUpdatePermission(authenticatedUser, targetUser);
         updateBaseFields(targetUser, userRequest);
         Optional.ofNullable(userRequest.getIsActive()).ifPresent(targetUser::setActive);
@@ -148,8 +162,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public BaseUserResponse updateUserByAssistant(UserUpdateByAssistantRequest userRequest, Long userId) {
-        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User targetUser = methodHelper.getUserById(userId);
+        methodHelper.checkBuildIn(targetUser);
+        uniquePropertyValidator.checkUniqueProperties(targetUser, userRequest);
         validateUpdatePermission(authenticatedUser, targetUser);
         updateBaseFields(targetUser, userRequest);
         return userMapper.userToUserResponse(userRepository.save(targetUser));
@@ -157,6 +173,8 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional
     public void updateBaseFields(User user, UserBaseUpdateRequest userRequest) {
+        Optional.ofNullable(userRequest.getUsername()).ifPresent(user::setUsername);
+        Optional.ofNullable(userRequest.getSsn()).ifPresent(user::setSsn);
         Optional.ofNullable(userRequest.getName()).ifPresent(user::setName);
         Optional.ofNullable(userRequest.getSurname()).ifPresent(user::setSurname);
         Optional.ofNullable(userRequest.getEmail()).ifPresent(user::setEmail);
@@ -164,49 +182,50 @@ public class UserServiceImpl implements IUserService {
         Optional.ofNullable(userRequest.getGender()).ifPresent(user::setGender);
     }
 
+    @Transactional
+    public BaseUserResponse updateUserForUsers(UserRequestWithoutPassword userRequest) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
+
+        User user = methodHelper.getUserByUsername(authenticatedUser.getUsername());
+        methodHelper.checkBuildIn(user);
+        uniquePropertyValidator.checkUniqueProperties(user, userRequest);
+
+        user.setUsername(userRequest.getUsername());
+        user.setBirthDay(userRequest.getBirthDay());
+        user.setEmail(userRequest.getEmail());
+        user.setPhoneNumber(userRequest.getPhoneNumber());
+        user.setBirthPlace(userRequest.getBirthPlace());
+        user.setGender(userRequest.getGender());
+        user.setName(userRequest.getName());
+        user.setSurname(userRequest.getSurname());
+        user.setSsn(userRequest.getSsn());
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.userToUserResponse(savedUser);
+    }
+
     private void validateUpdatePermission(UserDetailsImpl authenticatedUser, User targetUser) {
 
-        String roleName=authenticatedUser.getAuthorities().iterator().next().getAuthority();
-        RoleType authenticatedRole=RoleType.valueOf(roleName);
+        String roleName = authenticatedUser.getAuthorities().iterator().next().getAuthority();
+        RoleType authenticatedRole = RoleType.valueOf(roleName);
 
         RoleType targetRole = targetUser.getUserRole().getRoleType();
 
         if (authenticatedRole == RoleType.ADMIN) {
             return;
         }
-
         if (authenticatedRole == RoleType.MANAGER &&
                 (targetRole == RoleType.ASSISTANT_MANAGER ||
                         targetRole == RoleType.TEACHER ||
                         targetRole == RoleType.STUDENT)) {
             return;
         }
-
         if (authenticatedRole == RoleType.ASSISTANT_MANAGER &&
                 (targetRole == RoleType.TEACHER ||
                         targetRole == RoleType.STUDENT)) {
             return;
         }
-
         throw new BadRequestException(ErrorMessageType.NOT_PERMITTED);
-    }
-
-    @Transactional
-    public void updatePassword(UpdatePasswordRequest updatePasswordRequest) {
-        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
-        User user = methodHelper.getUserByUsername(authenticatedUser.getUsername());
-
-        if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
-            throw new BadRequestException(ErrorMessageType.PASSWORDS_DO_NOT_MATCH);
-        }
-
-        if (passwordEncoder.matches(updatePasswordRequest.getNewPassword(), user.getPassword())) {
-            throw new BadRequestException(ErrorMessageType.PASSWORDS_IS_OLD);
-        }
-
-        String encodedNewPassword = passwordEncoder.encode(updatePasswordRequest.getNewPassword());
-        user.setPassword(encodedNewPassword);
-
-        userRepository.save(user);
     }
 }

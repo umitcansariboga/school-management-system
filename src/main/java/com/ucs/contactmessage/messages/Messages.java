@@ -15,7 +15,11 @@ public class Messages {
     }
 
     public static String getMessage(String key,Object... args){
-        return messageSource.getMessage(key,args, LocaleContextHolder.getLocale());
+        try {
+            return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+        }catch (Exception e){
+            return key;
+        }
     }
 }
 
