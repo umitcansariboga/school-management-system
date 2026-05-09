@@ -39,7 +39,7 @@ public class EducationTermServiceImpl implements IEducationTermService {
         return educationTermMapper.toEducationTermResponse(savedEducationTerm);
     }
 
-    public EducationTermResponse getEducationTermResponseById(Long id) {
+    public EducationTermResponse getEducationTermById(Long id) {
 
         EducationTerm term = methodHelper.getEducationTermById(id);
 

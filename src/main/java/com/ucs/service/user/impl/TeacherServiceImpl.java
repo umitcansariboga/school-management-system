@@ -6,7 +6,7 @@ import com.ucs.entity.enums.RoleType;
 import com.ucs.exception.ConflictException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.payload.mappers.UserMapper;
-import com.ucs.payload.request.updateRequest.TeacherUpdateByAdminRequest;
+import com.ucs.payload.request.updateRequest.TeacherUpdateByManagerRequest;
 import com.ucs.payload.request.user.TeacherRequest;
 import com.ucs.payload.response.user.StudentResponse;
 import com.ucs.payload.response.user.TeacherResponse;
@@ -81,7 +81,7 @@ public class TeacherServiceImpl implements ITeacherService {
     }
 
     @Transactional
-    public TeacherResponse updateTeacherForManagers(TeacherUpdateByAdminRequest teacherRequest, Long userId) {
+    public TeacherResponse updateTeacherForManagers(TeacherUpdateByManagerRequest teacherRequest, Long userId) {
 
         UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User user = methodHelper.getUserById(userId);
@@ -107,7 +107,7 @@ public class TeacherServiceImpl implements ITeacherService {
     }
 
     @Transactional
-    public TeacherResponse saveAdvisorTeacher(Long teacherId) {
+    public UserResponse saveAdvisorTeacher(Long teacherId) {
 
         User user = methodHelper.getUserById(teacherId);
         methodHelper.checkRole(user, RoleType.TEACHER);
@@ -117,7 +117,7 @@ public class TeacherServiceImpl implements ITeacherService {
         user.setIsAdvisor(Boolean.TRUE);
         userRepository.save(user);
 
-        return userMapper.userToTeacherResponse(user);
+        return userMapper.userToUserResponse(user);
     }
 
     @Transactional

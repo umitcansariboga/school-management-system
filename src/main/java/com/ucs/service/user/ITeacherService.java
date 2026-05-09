@@ -1,6 +1,6 @@
 package com.ucs.service.user;
 
-import com.ucs.payload.request.updateRequest.TeacherUpdateByAdminRequest;
+import com.ucs.payload.request.updateRequest.TeacherUpdateByManagerRequest;
 import com.ucs.payload.request.user.TeacherRequest;
 import com.ucs.payload.response.user.StudentResponse;
 import com.ucs.payload.response.user.TeacherResponse;
@@ -14,9 +14,9 @@ public interface ITeacherService {
 
     List<StudentResponse> getAllStudentByAdvisorUserName();
 
-    TeacherResponse updateTeacherForManagers(TeacherUpdateByAdminRequest teacherRequest, Long userId);
+    TeacherResponse updateTeacherForManagers(TeacherUpdateByManagerRequest teacherRequest, Long userId);
 
-    TeacherResponse saveAdvisorTeacher(Long teacherId);
+    UserResponse saveAdvisorTeacher(Long teacherId);
 
     UserResponse deleteAdvisorTeacherById(Long teacherId);
 

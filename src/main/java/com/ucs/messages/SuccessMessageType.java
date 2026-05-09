@@ -28,9 +28,11 @@ public enum SuccessMessageType {
     EDUCATION_TERM_SAVED("201", "success.education.term.saved"),
     EDUCATION_TERM_UPDATED("200", "success.education.term.updated"),
     EDUCATION_TERM_DELETED("200", "success.education.term.deleted"),
+    EDUCATION_TERM_FOUND("200", "success.education.term.found"),
     LESSON_SAVED("201", "success.lesson.saved"),
     LESSON_FOUND("200", "success.lesson.found"),
     LESSON_DELETED("200", "success.lesson.deleted"),
+    LESSON_UPDATED("200", "success.lesson.updated"),
 
     // --- Lesson Program ---
     LESSON_PROGRAM_SAVED("201", "success.lesson.program.saved"),
