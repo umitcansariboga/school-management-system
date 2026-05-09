@@ -9,7 +9,7 @@ import java.util.List;
 public interface IEducationTermService {
 
     EducationTermResponse saveEducationTerm(EducationTermRequest educationTermRequest);
-    EducationTermResponse getEducationTermResponseById(Long id);
+    EducationTermResponse getEducationTermById(Long id);
     List<EducationTermResponse> getAllEducationTerms();
     Page<EducationTermResponse> getAllEducationTermsByPage(int page, int size, String sort, String type);
     String deleteEducationTermById(Long id);

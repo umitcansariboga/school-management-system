@@ -54,7 +54,7 @@ public interface UserMapper {
     @Mapping(target = "username", ignore = true)
     @Mapping(target = "builtIn", ignore = true)
     @Mapping(target = "userRole", ignore = true)
-    User updateToTeacherUserByAdminRequest(TeacherUpdateByAdminRequest teacherUpdateByAdminRequest, @MappingTarget User user);
+    User updateToTeacherUserByAdminRequest(TeacherUpdateByManagerRequest teacherUpdateByAdminRequest, @MappingTarget User user);
 
     //-------------------------------------------------------------
     @Mapping(target = "id", ignore = true)

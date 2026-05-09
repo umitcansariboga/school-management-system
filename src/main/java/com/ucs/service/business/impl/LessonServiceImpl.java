@@ -70,6 +70,13 @@ public class LessonServiceImpl implements ILessonService {
                 .collect(Collectors.toSet());
     }
 
+    public Page<LessonResponse> getLessonByLessonIdPage(int page, int size, String sort, String type, Set<Long> idSet) {
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        Page<Lesson> lessonPage = lessonRepository.findLessonByLessonIdIn(idSet, pageable);
+        return lessonPage.map(lessonMapper::toLessonResponse);
+    }
+
     @Transactional
     public LessonResponse updateLessonById(Long lessonId, LessonRequest lessonRequest) {
         Lesson lesson = methodHelper.getLessonById(lessonId);

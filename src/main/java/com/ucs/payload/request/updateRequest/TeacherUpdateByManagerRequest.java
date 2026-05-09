@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class TeacherUpdateByAdminRequest extends BaseUserPasswordRequest {
+public class TeacherUpdateByManagerRequest extends BaseUserPasswordRequest {
 
     private Boolean isActive;
     private Boolean isAdvisorTeacher;
