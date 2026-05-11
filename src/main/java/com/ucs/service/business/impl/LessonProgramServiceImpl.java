@@ -13,6 +13,7 @@ import com.ucs.payload.request.business.LessonProgramRequest;
 import com.ucs.payload.response.business.LessonProgramResponse;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.business.LessonProgramRepository;
+import com.ucs.security.service.UserDetailsImpl;
 import com.ucs.service.business.IEducationTermService;
 import com.ucs.service.business.ILessonService;
 import com.ucs.service.business.ILessonProgramService;
@@ -103,7 +104,9 @@ public class LessonProgramServiceImpl implements ILessonProgramService {
         return Messages.getMessage(SuccessMessageType.LESSON_PROGRAM_DELETED.getMessage());
     }
 
-    public Set<LessonProgramResponse> getAllLessonProgramByUser(UserResponse authenticatedUser) {
+    public Set<LessonProgramResponse> getAllLessonProgramByUser() {
+
+        UserDetailsImpl authenticatedUser=methodHelper.getAuthenticatedUserDetails();
         String username = authenticatedUser.getUsername();
         return lessonProgramRepository.findByUsers_Username(username)
                 .stream()

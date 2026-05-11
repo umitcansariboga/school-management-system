@@ -25,7 +25,7 @@ public interface ILessonProgramService {
 
     String deleteById(Long id);
 
-    Set<LessonProgramResponse> getAllLessonProgramByUser(UserResponse authenticatedUser);
+    Set<LessonProgramResponse> getAllLessonProgramByUser();
 
     List<LessonProgramResponse> getAllAssigned();
 
