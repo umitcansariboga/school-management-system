@@ -10,6 +10,7 @@ import com.ucs.payload.request.business.MeetRequest;
 import com.ucs.payload.response.business.MeetResponse;
 import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.business.MeetRepository;
+import com.ucs.security.service.UserDetailsImpl;
 import com.ucs.service.business.IMeetService;
 import com.ucs.service.helper.MethodHelper;
 import com.ucs.service.helper.PageableHelper;
@@ -38,7 +39,8 @@ public class MeetServiceImpl implements IMeetService {
     private final PageableHelper pageableHelper;
 
     @Transactional
-    public MeetResponse saveMeet(UserResponse authenticatedUser, MeetRequest meetRequest) {
+    public MeetResponse saveMeet(MeetRequest meetRequest) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User advisorTeacher = methodHelper.getUserByUsername(authenticatedUser.getUsername());
         methodHelper.checkAdvisor(advisorTeacher);
 
@@ -73,8 +75,9 @@ public class MeetServiceImpl implements IMeetService {
     }
 
     @Transactional
-    public String delete(Long meetId, UserResponse authenticatedUser) {
+    public String delete(Long meetId) {
 
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         Meet meet = methodHelper.isMeetExistById(meetId);
         methodHelper.isTeacherControl(meet, authenticatedUser.getUsername());
 
@@ -83,7 +86,8 @@ public class MeetServiceImpl implements IMeetService {
         return Messages.getMessage(SuccessMessageType.MEET_DELETED.getMessage());
     }
 
-    public List<MeetResponse> getAllMeetByStudent(UserResponse authenticatedUser) {
+    public List<MeetResponse> getAllMeetByStudent() {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User student = methodHelper.getUserByUsername(authenticatedUser.getUsername());
         methodHelper.checkRole(student, RoleType.STUDENT);
         return meetRepository.findByStudentList_Id(student.getId())
@@ -92,16 +96,17 @@ public class MeetServiceImpl implements IMeetService {
                 .collect(Collectors.toList());
     }
 
-    public Page<MeetResponse> getAllMeetByTeacher(UserResponse authenticateduser, int page, int size) {
-        User advisoryTeacher = methodHelper.getUserByUsername(authenticateduser.getUsername());
+    public Page<MeetResponse> getAllMeetByTeacher(int page, int size) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
+        User advisoryTeacher = methodHelper.getUserByUsername(authenticatedUser.getUsername());
         methodHelper.checkAdvisor(advisoryTeacher);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
         return meetRepository.findByAdvisoryTeacher_Id(advisoryTeacher.getId(), pageable)
                 .map(meetMapper::meetToMeetResponse);
     }
 
-    public MeetResponse updatemeet(MeetRequest meetRequest, Long meetId, UserResponse authenticatedUser) {
-
+    public MeetResponse updatemeet(MeetRequest meetRequest, Long meetId) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         Meet meet = methodHelper.isMeetExistById(meetId);
         methodHelper.isTeacherControl(meet, authenticatedUser.getUsername());
         dateTimeValidator.checkTimeWithException(meetRequest.getStartTime(), meetRequest.getStopTime());
@@ -138,8 +143,8 @@ public class MeetServiceImpl implements IMeetService {
         return meetMapper.meetToMeetResponse(updatedMeet);
     }
 
-    public Page<MeetResponse> getAll(UserResponse authenticatedUser, int page, int size) {
-
+    public Page<MeetResponse> getAllMeetByPage(int page, int size) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         User user = methodHelper.getUserByUsername(authenticatedUser.getUsername());
         methodHelper.checkAdvisor(user);
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
