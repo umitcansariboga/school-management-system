@@ -43,7 +43,7 @@ public class ContactMessageServiceImpl implements IContactMessageService {
     @Override
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Page<ContactMessageResponse> searchByEmail(String email, Pageable pageable) {
-        return contactMessageRepository.findbyEmail(email, pageable).map(contactMessageMapper::toContactMessageResponse);
+        return contactMessageRepository.findByEmail(email, pageable).map(contactMessageMapper::toContactMessageResponse);
     }
 
     @Override

@@ -40,11 +40,11 @@ public class LessonProgram {
     @ManyToOne
     private EducationTerm educationTerm;
 
-    @ManyToMany(mappedBy = "lessonProgramList")
+    @ManyToMany(mappedBy = "lessonProgramSet")
     private Set<User> users;
 
     @PreRemove
     private void removeLessonProgramFromUser() {
-        users.forEach(user -> user.getLessonProgramList().remove(this));
+        users.forEach(user -> user.getLessonProgramSet().remove(this));
     }
 }

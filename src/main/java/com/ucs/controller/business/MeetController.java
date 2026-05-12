@@ -46,7 +46,7 @@ public class MeetController {
     }
 
     @GetMapping("/me/teacher/page")
-    @PreAuthorize("hasAnyAuthority('Teacher')")
+    @PreAuthorize("hasAnyAuthority('TEACHER')")
     public ResponseEntity<Page<MeetResponse>> getAllMeetByTeacher(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
@@ -61,13 +61,13 @@ public class MeetController {
     }
 
     @DeleteMapping("/{meetId}")
-    @PreAuthorize("hasAnyAuthority('Teacher')")
+    @PreAuthorize("hasAnyAuthority('TEACHER')")
     public ResponseEntity<String> delete(@PathVariable Long meetId) {
         return ResponseEntity.ok(meetService.delete(meetId));
     }
 
     @PutMapping("/{meetId}")
-    @PreAuthorize("hasAnyAuthority('ADMIN','Teacher')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','TEACHER')")
     public ResponseEntity<ResponseMessage<MeetResponse>> updateMeetById(
             @PathVariable Long meetId,
             @RequestBody @Valid MeetRequest meetRequest) {

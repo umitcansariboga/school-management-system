@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface ContactMessageRepository extends JpaRepository<ContactMessage, Long> {
 
-    Page<ContactMessage> findbyEmail(String email, Pageable pageable);
+    Page<ContactMessage> findByEmail(String email, Pageable pageable);
 
     Page<ContactMessage> findBySubject(String subject, Pageable pageable);
 

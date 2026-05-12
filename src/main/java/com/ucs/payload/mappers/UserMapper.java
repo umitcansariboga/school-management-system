@@ -40,7 +40,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     User teacherRequestToUser(TeacherRequest teacherRequest);
 
-    @Mapping(target = "userId", source = "id")
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "userRole", source = "userRole.roleName")
     TeacherResponse userToTeacherResponse(User teacher);
 
@@ -60,7 +60,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     User studentRequestToUser(StudentRequest studentRequest);
 
-    @Mapping(target = "userId", source = "id")
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "userRole", source = "userRole.roleName")
     StudentResponse userToStudentResponse(User student);
 

@@ -25,10 +25,10 @@ public interface StudentInfoMapper {
                               EducationTerm educationTerm);
 
     @Mapping(target = "studentResponse", source = "student")
-    @Mapping(target = "educationTerm", expression = "java(studentInfo.getEducationTerm().getTerm()")
-    @Mapping(target = "lessonName", expression = "java(studentInfo.getLesson().getLessonName()")
-    @Mapping(target = "creditScore", expression = "java(studentInfo.getLesson().creditScore()")
-    @Mapping(target = "isCompulsory", expression = "java(studentInfo.getLesson().getIsCompulsory()")
+    @Mapping(target = "educationTerm", source = "educationTerm.term")
+    @Mapping(target = "lessonName", source = "lesson.lessonName")
+    @Mapping(target = "creditScore", source = "lesson.creditScore")
+    @Mapping(target = "isCompulsory", source = "lesson.isCompulsory")
     StudentInfoResponse toStudentInfoResponse(StudentInfo studentInfo);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

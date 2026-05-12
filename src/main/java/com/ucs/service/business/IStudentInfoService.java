@@ -7,13 +7,15 @@ import com.ucs.payload.response.user.UserResponse;
 import org.springframework.data.domain.Page;
 
 public interface IStudentInfoService {
-    StudentInfoResponse saveStudentInfo(StudentInfoRequest studentInfoRequest, UserResponse authenticatedUser);
+    StudentInfoResponse saveStudentInfo(StudentInfoRequest studentInfoRequest);
 
     String deleteById(Long studentInfoId);
 
     StudentInfoResponse update(UpdateStudentInfoRequest studentInfoRequest, Long studentInfoId);
 
-    Page<StudentInfoResponse> getAllForTeacher(UserResponse authenticatedUser, int page, int size);
+    Page<StudentInfoResponse> getAllForTeacher(int page, int size);
 
-    Page<StudentInfoResponse> getAllForStudent(UserResponse authenticatedUser, int page, int size);
+    Page<StudentInfoResponse> getAllForStudent(int page, int size);
+
+    Page<StudentInfoResponse> getAllStudentInfoByPage(int page, int size, String sort, String type);
 }

@@ -63,7 +63,7 @@ public class UserController {
         return ResponseEntity.ok(userService.deleteUserById(id));
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/admin/{userId}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseMessage<BaseUserResponse>> updateUserByAdmin(
             @RequestBody @Valid UserUpdateByAdminRequest adminRequest,
@@ -73,7 +73,7 @@ public class UserController {
                 SuccessMessageType.USER_UPDATED));
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/manager/{userId}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER')")
     public ResponseEntity<ResponseMessage<BaseUserResponse>> updateUserByManager(
             @RequestBody @Valid UserUpdateByManagerRequest managerRequest,
@@ -83,7 +83,7 @@ public class UserController {
                 SuccessMessageType.USER_UPDATED));
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/assistant/{userId}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public ResponseEntity<ResponseMessage<BaseUserResponse>> updateUserByAssistant(
             @RequestBody @Valid UserUpdateByAssistantRequest assistantRequest,

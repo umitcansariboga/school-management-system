@@ -8,8 +8,8 @@ import org.springframework.cache.annotation.EnableCaching;
 @EnableCaching
 public class SchoolManagementSystemApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SchoolManagementSystemApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SchoolManagementSystemApplication.class, args);
+    }
 
 }

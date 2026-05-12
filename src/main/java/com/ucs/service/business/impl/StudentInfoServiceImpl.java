@@ -12,8 +12,8 @@ import com.ucs.payload.mappers.StudentInfoMapper;
 import com.ucs.payload.request.business.StudentInfoRequest;
 import com.ucs.payload.request.business.UpdateStudentInfoRequest;
 import com.ucs.payload.response.business.StudentInfoResponse;
-import com.ucs.payload.response.user.UserResponse;
 import com.ucs.repository.business.StudentInfoRepository;
+import com.ucs.security.service.UserDetailsImpl;
 import com.ucs.service.business.IEducationTermService;
 import com.ucs.service.business.ILessonService;
 import com.ucs.service.business.IStudentInfoService;
@@ -46,7 +46,9 @@ public class StudentInfoServiceImpl implements IStudentInfoService {
     private Double finalExamPercentage;
 
     @Transactional
-    public StudentInfoResponse saveStudentInfo(StudentInfoRequest studentInfoRequest, UserResponse authenticatedUser) {
+    public StudentInfoResponse saveStudentInfo(StudentInfoRequest studentInfoRequest) {
+
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
 
         String teacherUsername = authenticatedUser.getUsername();
 
@@ -119,9 +121,9 @@ public class StudentInfoServiceImpl implements IStudentInfoService {
         return studentInfoMapper.toStudentInfoResponse(updatedStudentInfo);
     }
 
-    public Page<StudentInfoResponse> getAllForTeacher(UserResponse authenticatedUser,
-                                                      int page,
-                                                      int size) {
+    public Page<StudentInfoResponse> getAllForTeacher(int page, int size) {
+
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
         String username = authenticatedUser.getUsername();
 
@@ -129,13 +131,21 @@ public class StudentInfoServiceImpl implements IStudentInfoService {
                 .map(studentInfoMapper::toStudentInfoResponse);
     }
 
-    public Page<StudentInfoResponse> getAllForStudent(UserResponse authenticatedUser,
-                                                      int page,
-                                                      int size) {
+    public Page<StudentInfoResponse> getAllForStudent(int page, int size) {
+
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
         String username = authenticatedUser.getUsername();
 
         return studentInfoRepository.findByStudent_Username(username, pageable)
+                .map(studentInfoMapper::toStudentInfoResponse);
+    }
+
+    public Page<StudentInfoResponse> getAllStudentInfoByPage(int page, int size, String sort, String type) {
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
+        Pageable pageable = pageableHelper.getPageableWithProperties(page, size, sort, type);
+
+        return studentInfoRepository.findAll(pageable)
                 .map(studentInfoMapper::toStudentInfoResponse);
     }
 }
