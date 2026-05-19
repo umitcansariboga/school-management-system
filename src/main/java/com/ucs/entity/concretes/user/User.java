@@ -71,7 +71,14 @@ public class User {
     @ManyToMany(mappedBy = "studentList")
     private Set<Meet> meetList;
 
+    @Column(name = "is_active",nullable = false)
+    @Builder.Default
     private boolean isActive = true;
-    private Boolean isLocked = false;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isLocked = false;
+
+    @Builder.Default
     private LocalDate lastPasswordChange = LocalDate.now();
 }

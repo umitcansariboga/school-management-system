@@ -19,7 +19,7 @@ import java.util.Set;
 public class MeetRequest {
 
     @NotBlank(message = "Please enter description")
-    @Size(min = 2, max = 250, message = "description should be at least 2 chars")
+    @Size(min = 2, max = 1000, message = "description should be at least 2 chars")
     private String description;
 
     @NotNull(message = "Please enter date")

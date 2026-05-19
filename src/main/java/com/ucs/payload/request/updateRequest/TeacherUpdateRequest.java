@@ -21,7 +21,7 @@ public class TeacherUpdateRequest {
     @Size(min = 2, max = 16, message = "Your name should be at least 2 chars")
     private String name;
 
-    @Size(min = 2, max = 16, message = "Your surname should be at least 2 chars")
+    @Size(min = 2, max = 20, message = "Your surname should be at least 2 chars")
     private String surname;
 
     @Pattern(
@@ -31,14 +31,14 @@ public class TeacherUpdateRequest {
     private String phoneNumber;
 
     @Email(message = "Please enter valid email")
-    @Size(max = 50, message = "Email max 50 chars")
+    @Size(min = 5, max = 50, message = "Your email should be between 5 and 50 chars")
     private String email;
 
     @Past(message = "Your birthday can not be in the future")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthDay;
 
-    @Size(min = 2, max = 16, message = "Your birthplace should be at least 2 chars")
+    @Size(min = 2, max = 20, message = "Your birthplace should be at least 2 chars")
     private String birthPlace;
 
     private Gender gender;

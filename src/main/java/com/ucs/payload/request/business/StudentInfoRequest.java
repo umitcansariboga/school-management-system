@@ -28,7 +28,7 @@ public class StudentInfoRequest {
     private Integer absentee;
 
     @NotBlank(message = "Please enter info")
-    @Size(min = 10, max = 200, message = "Info should be at least 10 chars")
+    @Size(min = 10, max = 1000, message = "Info should be at least 10 chars")
     private String infoNote;
 
     @NotNull(message = "Please select lesson")

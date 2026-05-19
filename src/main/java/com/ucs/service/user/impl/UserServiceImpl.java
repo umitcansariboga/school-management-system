@@ -29,7 +29,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -95,7 +94,7 @@ public class UserServiceImpl implements IUserService {
     public Page<UserResponse> getUserByName(int page, int size, String name) {
 
         Pageable pageable = pageableHelper.getPageableWithProperties(page, size);
-        return userRepository.findByNameContaining(name, pageable)
+        return userRepository.findByNameContainingIgnoreCase(name, pageable)
                 .map(userMapper::userToUserResponse);
     }
 
@@ -107,24 +106,29 @@ public class UserServiceImpl implements IUserService {
 
         methodHelper.checkBuildIn(targetUser);
 
-        RoleType authenticatedRole = RoleType.valueOf(authenticatedUser.getUserRole().getRoleName());
+        String roleName = authenticatedUser.getUserRole().getRoleName();
+        RoleType authenticatedRole = RoleType.of(roleName);
         RoleType targetRole = targetUser.getUserRole().getRoleType();
 
-        if (authenticatedRole == RoleType.ADMIN ||
-                (authenticatedRole == RoleType.MANAGER &&
-                        (targetRole == RoleType.ASSISTANT_MANAGER ||
-                                targetRole == RoleType.TEACHER ||
-                                targetRole == RoleType.STUDENT)) ||
-                (authenticatedRole == RoleType.ASSISTANT_MANAGER &&
-                        (targetRole == RoleType.TEACHER ||
-                                targetRole == RoleType.STUDENT))) {
+        boolean isAllowed = false;
 
-            userRepository.delete(targetUser);
-
-            return Messages.getMessage(SuccessMessageType.USER_DELETED.getMessage());
+        if (authenticatedRole == RoleType.ADMIN) {
+            isAllowed = true;
+        } else if (authenticatedRole == RoleType.MANAGER) {
+            isAllowed = (targetRole == RoleType.ASSISTANT_MANAGER ||
+                    targetRole == RoleType.TEACHER ||
+                    targetRole == RoleType.STUDENT);
+        } else if (authenticatedRole == RoleType.ASSISTANT_MANAGER) {
+            isAllowed = (targetRole == RoleType.TEACHER ||
+                    targetRole == RoleType.STUDENT);
         }
 
-        throw new BadRequestException(ErrorMessageType.NOT_PERMITTED);
+        if (!isAllowed) {
+            throw new BadRequestException(ErrorMessageType.NOT_PERMITTED);
+        }
+
+        userRepository.delete(targetUser);
+        return Messages.getMessage(SuccessMessageType.USER_DELETED.getMessage());
     }
 
     @Override

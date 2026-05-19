@@ -1,7 +1,7 @@
 package com.ucs.entity.enums;
 
 public enum Term {
-    FAll_SEMESTER,
+    FALL_SEMESTER,
     SPRING_SEMESTER,
     SUMMER_SEMESTER
 }

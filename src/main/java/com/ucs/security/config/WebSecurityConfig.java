@@ -3,9 +3,12 @@ package com.ucs.security.config;
 import com.ucs.security.jwt.AuthEntryPointJwt;
 import com.ucs.security.jwt.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -35,6 +38,7 @@ public class WebSecurityConfig {
     private final AuthEntryPointJwt unauthorizedHandler;
     private final UserDetailsService userDetailsService;
     private final AuthTokenFilter authTokenFilter;
+    private final MessageSource messageSource;
 
     private static final String[] AUTH_WHITE_LIST = {
             "/",
@@ -49,12 +53,32 @@ public class WebSecurityConfig {
             "/swagger-ui/**"};
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, MessageSource messageSource) throws Exception {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(unauthorizedHandler))
+                        exception.authenticationEntryPoint(unauthorizedHandler)
+                                .accessDeniedHandler((request,
+                                                      response,
+                                                      accessDeniedException) -> {
+                                    String errorMessage = messageSource.getMessage(
+                                            "error.access.denied",
+                                            null,
+                                            LocaleContextHolder.getLocale());
+
+                                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                                    response.setContentType("application/json;charset=UTF-8");
+
+                                    String jsonResponse = String.format(
+                                            "{\"message\": \"%s\", \"success\": false, \"errorCode\": \"403\", \"path\": \"%s\", \"timeStamp\": \"%s\"}",
+                                            errorMessage,
+                                            request.getRequestURI(),
+                                            java.time.LocalDateTime.now()
+                                    );
+                                    response.getWriter().write(jsonResponse);
+                                })
+                )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth

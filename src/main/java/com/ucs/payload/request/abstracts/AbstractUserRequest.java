@@ -41,11 +41,11 @@ public abstract class AbstractUserRequest {
     private String ssn;
 
     @NotBlank(message = "Please enter your birthplace")
-    @Size(min = 2, max = 16, message = "Your birthplace should be at least 2 chars")
+    @Size(min = 2, max = 20, message = "Your birthplace should be at least 2 chars")
     private String birthPlace;
 
     @NotNull(message = "Please enter your phone number")
-    @Size(min = 2, max = 12, message = "Your phone number should be at least 2 chars")
+    @Size(min = 2, max = 20, message = "Your phone number should be at least 2 chars")
     @Pattern(regexp = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$",
             message = "Please enter valid phone number")  //555-444-3322
     private String phoneNumber;
@@ -55,6 +55,6 @@ public abstract class AbstractUserRequest {
 
     @NotBlank(message = "Please enter your email")
     @Email(message = "Please enter valid email")
-    @Size(min = 2, max = 12, message = "Your email should be between 5 and 50 chars")
+    @Size(min = 5, max = 50, message = "Your email should be between 5 and 50 chars")
     private String email;
 }

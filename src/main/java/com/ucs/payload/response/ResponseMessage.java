@@ -21,7 +21,6 @@ public class ResponseMessage<E> {
 
     private E object;
     private String message;
-    //private HttpStatus httpStatus;
     private LocalDateTime timeStamp;
     private boolean success;
     private String errorCode;

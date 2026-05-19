@@ -7,6 +7,7 @@ import com.ucs.payload.response.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -71,5 +72,32 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler(java.lang.IllegalArgumentException.class)
+    public ResponseEntity<ResponseMessage<String>> handleIllegalArgumentException(java.lang.IllegalArgumentException ex, WebRequest request) {
+
+        log.error("Argüman hatası: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ResponseMessage.<String>builder()
+                        .message(Messages.getMessage(ErrorMessageType.ROLE_NOT_FOUND.getMessage()))
+                        .success(false)
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
+    public ResponseEntity<ResponseMessage<Void>> handleAccessDeniedException(AccessDeniedException exception,
+                                                                             WebRequest request) {
+        ResponseMessage<Void> response = ResponseMessage.<Void>builder()
+                .success(false)
+                .message(Messages.getMessage(ErrorMessageType.NOT_PERMITTED.getMessage()))
+                .errorCode(ErrorMessageType.NOT_PERMITTED.getCode())
+                .timeStamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 }

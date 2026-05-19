@@ -129,7 +129,7 @@ public class MethodHelper {
                                         existingTerm.getEndDate().isBefore(request.getEndDate()))
                 );
         if (isOverlap) {
-            throw new BadRequestException(ErrorMessageType.EDUCATION_DATE_CONFLICT);
+            throw new ConflictException(ErrorMessageType.EDUCATION_DATE_CONFLICT);
         }
     }
 

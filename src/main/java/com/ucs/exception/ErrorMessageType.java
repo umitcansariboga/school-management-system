@@ -30,12 +30,12 @@ public enum ErrorMessageType {
     LESSON_ALREADY_REGISTERED("409", "lesson.already.registered"),
     LESSON_PROGRAM_ALREADY_EXISTS("409", "lesson.program.already.exists"),
     MEET_HOURS_CONFLICT("409", "meet.hours.conflict"),
+    EDUCATION_DATE_CONFLICT("409", "education.date.conflict"),
 
     // --- 400 BAD REQUEST ---
     PASSWORDS_DO_NOT_MATCH("400", "error.password.mismatch"),
     EDUCATION_START_DATE_INVALID("400", "education.start.date.invalid"),
     EDUCATION_END_DATE_INVALID("400", "education.end.date.invalid"),
-    EDUCATION_DATE_CONFLICT("400", "education.date.conflict"),
     TIME_NOT_VALID("400", "error.time.not.valid"),
     USER_ROLE_MISMATCH("400", "user.role.mismatch"),
     WRONG_DATE_FORMAT("400", "contact.error.date.format"),
@@ -43,8 +43,10 @@ public enum ErrorMessageType {
     ONLY_ONE_MANAGER("400","user.only.one.manager"),
     PASSWORD_IS_OLD("400","error.password.is.old") ,
 
+
     // --- 403 FORBIDDEN ---
     NOT_PERMITTED("403", "error.not.permitted"),
+    ACCESS_DENIED("403", "error.access.denied"),
 
     // --- 500 GLOBAL ---
     GLOBAL_EXCEPTION("500", "error.unexpected.occured");

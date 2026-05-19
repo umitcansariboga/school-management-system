@@ -31,7 +31,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getPassword(),
                 user.getUserRole().getRoleType().name(),
                 user.isActive(),
-                user.getIsLocked(),
+                user.isLocked(),
                 user.getLastPasswordChange(),
                 user.getUserRole()
         );

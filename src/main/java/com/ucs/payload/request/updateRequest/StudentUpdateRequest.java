@@ -29,10 +29,10 @@ public class StudentUpdateRequest extends AbstractUserRequest {
     private String phoneNumber;
 
     @Email(message = "Please enter valid email")
-    @Size(max = 50, message = "Your email should be max 50 chars")
+    @Size(min = 5, max = 50, message = "Your email should be between 5 and 50 chars")
     private String email;
 
-    @Size(min = 2, max = 16, message = "Your birthplace should be at least 2 chars")
+    @Size(min = 2, max = 20, message = "Your birthplace should be at least 2 chars")
     private String birthPlace;
 
     @NotBlank(message = "Please enter your mother name")

@@ -15,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserBaseUpdateRequest {
 
-    @Size(min = 3, max = 30, message = "Username must be between 3 and 30 characters")
+    @Size(min = 2, max = 30, message = "Username must be between 3 and 30 characters")
     private String username;
 
     @Pattern(
@@ -31,12 +31,14 @@ public class UserBaseUpdateRequest {
     private String surname;
 
     @Email
+    @Size(min = 5, max = 50, message = "Your email should be between 5 and 50 chars")
     private String email;
 
     @Pattern(
             regexp = "^((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$",
             message = "Please enter valid phone number"
     )
+    @Size(min = 2, max = 20, message = "Your phone number should be at least 2 chars")
     private String phoneNumber;
 
     private Gender gender;

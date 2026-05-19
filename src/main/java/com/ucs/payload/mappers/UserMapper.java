@@ -14,6 +14,8 @@ import org.mapstruct.*;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "isActive", ignore = true)
+    @Mapping(target = "isLocked", ignore = true)
     User requestToUser(BaseUserRequest baseUserRequest);
 
     @Mapping(target = "id", ignore = true)

@@ -28,7 +28,7 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<ResponseMessage<UserResponse>> create(
             @RequestBody @Valid UserRequest userRequest,
-            @PathVariable String userRole
+            @PathVariable(value = "userRole") String userRole
     ) {
         return ResponseEntity.ok(ResponseMessage.success(userService.saveUser(userRequest, userRole),
                 SuccessMessageType.USER_SAVED));
@@ -55,12 +55,12 @@ public class UserController {
                 SuccessMessageType.USER_FOUND));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{userId}")
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public ResponseEntity<String> deleteById(
-            @PathVariable(value = "id") Long id
+            @PathVariable(value = "userId") Long userId
     ) {
-        return ResponseEntity.ok(userService.deleteUserById(id));
+        return ResponseEntity.ok(userService.deleteUserById(userId));
     }
 
     @PutMapping("/admin/{userId}")

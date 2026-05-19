@@ -1,5 +1,6 @@
 package com.ucs.controller.user;
 
+import com.ucs.contactmessage.messages.Messages;
 import com.ucs.messages.SuccessMessageType;
 import com.ucs.payload.request.LoginRequest;
 import com.ucs.payload.request.UpdatePasswordRequest;
@@ -28,7 +29,7 @@ public class AuthenticationController {
     public ResponseEntity<String> updatePassword(
             @RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
         authenticationService.updatePassword(updatePasswordRequest);
-        String response = SuccessMessageType.PASSWORD_CHANGED.getMessage();
+        String response = Messages.getMessage(SuccessMessageType.PASSWORD_CHANGED.getMessage()) ;
         return ResponseEntity.ok(response);
     }
 }

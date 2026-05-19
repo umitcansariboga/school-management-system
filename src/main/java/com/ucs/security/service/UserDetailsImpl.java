@@ -2,6 +2,7 @@ package com.ucs.security.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ucs.entity.concretes.user.UserRole;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,7 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     private final Boolean isAdvisor;
     private final String ssn;
     private final boolean isActive;
-    private final Boolean isLocked;
+    private final boolean isLocked;
     private final LocalDate lastPasswordChange;
     private final UserRole userRole;
 
@@ -37,7 +38,7 @@ public class UserDetailsImpl implements UserDetails {
                            String password,
                            String role,
                            boolean isActive,
-                           Boolean isLocked,
+                           boolean isLocked,
                            LocalDate lastPasswordChange,
                            UserRole userRole) {
         this.id = id;
@@ -50,7 +51,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = List.of(new SimpleGrantedAuthority(role));
         this.isLocked = isLocked;
         this.lastPasswordChange = lastPasswordChange;
-        this.userRole=userRole;
+        this.userRole = userRole;
     }
 
     @Override
@@ -75,7 +76,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.isLocked;
+        return !this.isLocked;
     }
 
     @Override
