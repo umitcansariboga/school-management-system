@@ -16,4 +16,6 @@ public class ChooseLessonProgramWithId {
     @NotNull(message = "Please select lesson program")
     @Size(min = 1,message = "Lesson must not be empty")
     private Set<Long> lessonProgramId;
+
+    private Long teacherId;
 }

@@ -1,6 +1,7 @@
 package com.ucs.controller.user;
 
 import com.ucs.messages.SuccessMessageType;
+import com.ucs.payload.request.business.ChooseLessonProgramWithId;
 import com.ucs.payload.request.updateRequest.TeacherUpdateByManagerRequest;
 import com.ucs.payload.request.user.TeacherRequest;
 import com.ucs.payload.response.ResponseMessage;
@@ -74,5 +75,12 @@ public class TeacherController {
         return ResponseEntity.ok(teacherService.getAllAdvisorTeacher(page, size, sort, type));
     }
 
-
+    @PostMapping("/add-lesson-program-to-teacher")
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    public ResponseEntity<ResponseMessage<TeacherResponse>> addLessonProgramToTeacher(
+            @RequestBody @Valid ChooseLessonProgramWithId chooseLessonProgramWithId
+            ){
+        return ResponseEntity.ok(ResponseMessage.success(teacherService.addLessonProgramToTeacher(chooseLessonProgramWithId),
+                SuccessMessageType.LESSON_PROGRAM_ADDED_TEACHER));
+    }
 }

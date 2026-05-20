@@ -37,6 +37,7 @@ public enum SuccessMessageType {
     // --- Lesson Program ---
     LESSON_PROGRAM_SAVED("201", "success.lesson.program.saved"),
     LESSON_PROGRAM_ADDED("200", "success.lesson.program.added"),
+    LESSON_PROGRAM_ADDED_TEACHER("200", "success.lesson.program.added.teacher"),
     LESSON_PROGRAM_DELETED("200", "success.lesson.program.deleted"),
     LESSON_PROGRAM_FOUND("200", "success.lesson.program.found"),
 

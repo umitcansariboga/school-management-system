@@ -7,6 +7,7 @@ public enum ErrorMessageType {
 
     // --- 404 NOT FOUND ---
     ROLE_NOT_FOUND("404", "user.role.not.found"),
+    ROLE_NOT_ROLE("404", "user.no.role"),
     USER_NOT_FOUND_WITH_ID("404", "user.not.found.id"),
     USER_NOT_FOUND_WITH_USERNAME("404", "user.not.found.username"),
     ADVISOR_TEACHER_NOT_FOUND("404", "advisor.teacher.not.found"),

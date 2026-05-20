@@ -1,5 +1,6 @@
 package com.ucs.service.user;
 
+import com.ucs.payload.request.business.ChooseLessonProgramWithId;
 import com.ucs.payload.request.updateRequest.TeacherUpdateByManagerRequest;
 import com.ucs.payload.request.user.TeacherRequest;
 import com.ucs.payload.response.user.StudentResponse;
@@ -21,4 +22,6 @@ public interface ITeacherService {
     UserResponse deleteAdvisorTeacherById(Long teacherId);
 
     Page<UserResponse> getAllAdvisorTeacher(int page, int size, String sort, String type);
+
+    TeacherResponse addLessonProgramToTeacher(ChooseLessonProgramWithId chooseLessonProgramWithId);
 }

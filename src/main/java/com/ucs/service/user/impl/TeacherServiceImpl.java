@@ -6,6 +6,7 @@ import com.ucs.entity.enums.RoleType;
 import com.ucs.exception.ConflictException;
 import com.ucs.exception.ErrorMessageType;
 import com.ucs.payload.mappers.UserMapper;
+import com.ucs.payload.request.business.ChooseLessonProgramWithId;
 import com.ucs.payload.request.updateRequest.TeacherUpdateByManagerRequest;
 import com.ucs.payload.request.user.TeacherRequest;
 import com.ucs.payload.response.user.StudentResponse;
@@ -144,4 +145,19 @@ public class TeacherServiceImpl implements ITeacherService {
         return userRepository.findAll(pageable)
                 .map(userMapper::userToUserResponse);
     }
+
+    @Transactional
+    public TeacherResponse addLessonProgramToTeacher(ChooseLessonProgramWithId chooseLessonProgramWithId){
+        UserDetailsImpl authenticatedUser = methodHelper.getAuthenticatedUserDetails();
+        User teacher=methodHelper.getUserById(chooseLessonProgramWithId.getTeacherId());
+        methodHelper.checkRole(teacher,RoleType.TEACHER);
+        Set<LessonProgram> lessonPrograms=
+                lessonProgramService.getLessonProgramByIdSet(chooseLessonProgramWithId.getLessonProgramId());
+        teacher.getLessonProgramSet().addAll(lessonPrograms);
+
+        User savedTeacher=userRepository.save(teacher);
+
+        return userMapper.userToTeacherResponse(savedTeacher);
+    }
+
 }
